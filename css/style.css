@@ -56,44 +56,50 @@ section#main header{
 
 section#main div#conteudo_header{
     position: relative;
-    background-color: #154779;
+    background-color: #228356;
     z-index: 1;
-    max-width: 500px;
-    margin: 100px 30%;
+    width: 300px;
+    margin: 50px calc(50% - 150px);
     padding: 20px;
 }
-section#main div#conteudo_header h2{
-    font-size: 33px;
+section#main div#conteudo_header h3{
+    font-size: 30px;
     font-weight: lighter;
     z-index: 0;
 }
-section#main div#conteudo_header p{
-    font-size: 16px;
-    margin-top: 16px;
-    text-indent: 20px;
+
+section#main div#conteudo_header div{
+    margin: 10px;
 }
-section#main div#conteudo_header a{
-    width: 177px;
-    height: 44px;
-    background-color: #2692FF;
-    color: white;
-    text-decoration: none;
+section#main div#conteudo_header input[type="text"], 
+section#main div#conteudo_header input[type="password"]{
+    width: 200px;
+}
+section#main div#conteudo_header input[type="submit"]{
     text-align: center;
-    display: block;
-    border-radius: 15px;
-    line-height: 44px;
-    margin-top: 18px;
+    font-weight: bold;
+    color: white;
+    background-color: #50cc98;
+
+    border-radius: 2px;
+    border-width: 1px;
+
+    width: 100px;
+    padding: 3px 0px;
+    margin-top: 10px;
+    margin-left: calc(50% - 50px);
 }
+
 footer{
     width: 100%;
     height: 10%;
-    background-color: #2071c2;
+    background-color: #50cc98;
     color: white;
     font-size: 18px;
     text-align: center;
 }
 footer p{
-    padding: 20px;
+    padding: 15px;
 }
 
 
