@@ -49,7 +49,7 @@
 
                             if ($db) {
                                 echo "Conexão bem-sucedida!";
-                                header('Location: Menu.html');
+                                header('Location: Envios.php');
                                 exit; // Certifique-se de chamar exit após o redirecionamento
                             } else {
                                 echo "Falha na conexão.";
