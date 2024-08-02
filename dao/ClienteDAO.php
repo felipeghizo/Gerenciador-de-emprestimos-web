@@ -1,10 +1,24 @@
 <?php
-
+require_once 'Conexao.php';
 class ClienteDAO {
     private $pdo;
-    
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
+
+    public function __construct($nome = "", $telefone = "", $email = "", $NumeroCliente = 0, $endereco = "") {
+        $this->nome = $nome;
+        $this->telefone = $telefone;
+        $this->email = $email;
+        $this->NumeroCliente = $NumeroCliente;
+        $this->endereco = $endereco;
+    }
+
+    public function conectar(){
+        $banco = "envio";
+        $ip = "10.100.68.253";
+        $senha = "Camerasip135.";
+
+        // Cria a conexão
+        $conexao = new Conexao($banco, $ip, $senha);
+        return $pdo = $conexao->getConexao();
     }
 
     // Obtém o ID do cliente
@@ -33,11 +47,12 @@ class ClienteDAO {
     }
 
     // Obtém o nome do cliente pelo ID
-    public function getNome($clienteId) {
+    public function getNomeDAO($clienteId) {
         $sql = "SELECT nome FROM clientes WHERE clienteid = :clienteid";
         $nome = "";
 
         try {
+
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute(['clienteid' => $clienteId]);
             $nome = $stmt->fetchColumn();

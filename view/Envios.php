@@ -60,10 +60,13 @@
                 <?php
                     // Configurações do banco de dados
                     require_once '../dao/Conexao.php';
+                    require_once '../modelo/Cliente.php';
 
                     $banco = "envio";
                     $ip = "10.100.68.253";
                     $senha = "Camerasip135.";
+
+                    $cliente = new Cliente();
 
                     try {
                         // Cria a conexão
@@ -91,7 +94,7 @@
                             
                             foreach ($results as $row) {
                                 echo '<tr>';
-                                echo '<td>' . htmlspecialchars($row['clienteid']) . '</td>';
+                                echo '<td>' . $cliente->getNomeID(intval(htmlspecialchars($row['clienteid']))) . '</td>';
                                 echo '<td>' . htmlspecialchars($row['cameraid']) . '</td>';
                                 echo '<td>' . htmlspecialchars($row['acesso']) . '</td>';
                                 echo '</tr>';

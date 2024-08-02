@@ -1,6 +1,6 @@
 <?php
 
-require_once 'ClienteDAO.php'; // Certifique-se de que o caminho está correto
+require_once '../dao/ClienteDAO.php'; // Certifique-se de que o caminho está correto
 
 class Cliente {
 
@@ -18,7 +18,7 @@ class Cliente {
         $this->email = $email;
         $this->NumeroCliente = $NumeroCliente;
         $this->endereco = $endereco;
-        $this->clienteDAO = new ClienteDAO();
+        $this->clienteDAO = new ClienteDAO($nome, $telefone, $email, $NumeroCliente, $endereco);
     }
 
     // Gets
