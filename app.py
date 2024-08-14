@@ -21,15 +21,15 @@ def envios():
     return render_template('Envios.html')  
 
 @app.route('/cameras')
-def envios():
+def cameras():
     return render_template('Cameras.html')  
 
 @app.route('/clientes')
-def envios():
+def clientes():
     return render_template('Clientes.html')  
 
 @app.route('/historico')
-def envios():
+def historico():
     return render_template('Historico.html')  
 
 def connect_to_db(banco, ip, senha):
