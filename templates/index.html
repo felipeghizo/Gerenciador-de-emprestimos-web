@@ -24,7 +24,7 @@
             <div id="conteudo_header">
                 <form method="post">
                     <div id="input_Banco">
-                        <h3>banco:</h3>
+                        <h3>Banco:</h3>
                         <input id="Banco_connect" name="Banco_connect" type="text" placeholder="Nome do banco" required>
                     </div>
                     <div id="input_IP">
@@ -35,17 +35,30 @@
                         <h3>Senha:</h3>
                         <input id="Senha_connect" name="Senha_connect" type="password" required>
                     </div>
-                    <form action="{{ url_for('envios') }}" method="get">
-                        <input type="submit" value="Procurar">
-                    </form>
+                    <input type="submit" value="Procurar">
                 </form>
+                <!-- Elemento para mostrar a mensagem de erro -->
+                <div id="wrong_input" style="display: none; color: rgb(129, 1, 1);">
+                    <p>Dados inseridos estão errados!</p>
+                </div>
             </div>
         </div>
     </section>
     <footer>
         <p>Todos os direitos reservados.</p>
     </footer>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-    <script type="text/javascript" src="js/menu_mobile.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Usando {{ show_error | tojson | safe }} para garantir que o valor seja corretamente passado para o JavaScript
+            var showError = {{ show_error | tojson | safe }};
+            
+            if (showError) {
+                var errorElement = document.getElementById('wrong_input');  // Corrigido para o ID correto
+                if (errorElement) {  // Verifique se o elemento existe
+                    errorElement.style.display = 'block'; // Mostrar o elemento
+                }
+            }
+        });
+    </script>
 </body>
 </html>

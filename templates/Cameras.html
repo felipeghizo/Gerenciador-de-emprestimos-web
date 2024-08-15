@@ -21,13 +21,10 @@
                 </div>
                 <div id="Menu">
                     <ul>
-                        <a href="Cameras.html"><li>Câmeras</li></a>
-                        <a href="Clientes.html"><li>Clientes</li></a>
-                        <a href="Historico.html"><li>Histórico</li></a>
-                        <form action="{{ url_for('call_app2') }}" method="get">
-                            <input type="submit" value="Chamar App2">
-                        </form>
-                         
+                        <li><a href="{{ url_for('cameras') }}">Câmeras</a></li>
+                        <li><a href="{{ url_for('clientes') }}">Clientes</a></li>
+                        <li><a href="{{ url_for('historico') }}">Histórico</a></li>
+                        <li><a href="{{ url_for('envios') }}">Envios</a></li>
                     </ul>
                 </div>
                 <div class="clear"></div>
