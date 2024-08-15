@@ -11,26 +11,33 @@
     <title>Envios</title>
 </head>
 <body>
-    <header>
-        <div id="logo">
-            <h1>Bancos de dados EAG</h1>
+    <section id="Topo">
+        <div id="layer"></div>
+        <div class="center">
+            <header>
+                <div class="clear"></div>
+                <div id="logo">
+                    <h1>Bancos de dados EAG</h1>
+                </div>
+                <div id="Menu">
+                    <ul>
+                        <li><a href="{{ url_for('cameras') }}">Câmeras</a></li>
+                        <li><a href="{{ url_for('clientes') }}">Clientes</a></li>
+                        <li><a href="{{ url_for('historico') }}">Histórico</a></li>
+                        <li style="background-color: rgba(0, 0, 0, 0.35);"><a href="{{ url_for('envios') }}">Envios</a></li>
+                    </ul>
+                </div>
+                <div class="clear"></div>
+            </header>
         </div>
-        <nav id="Menu">
-            <ul>
-                <li><a href="{{ url_for('cameras') }}">Câmeras</a></li>
-                <li><a href="{{ url_for('clientes') }}">Clientes</a></li>
-                <li><a href="{{ url_for('historico') }}">Histórico</a></li>
-                <li><a href="{{ url_for('envios') }}">Envios</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main id="Main">
+    </section>
+    <section id="Main">
         <div id="botoes">
             <ul>
-                <li><button type="button">Adicionar teste</button></li>
-                <li><button type="button">Encerrar teste</button></li>
-                <li><button type="button">Editar teste</button></li>
-                <li><button type="button">Visualizar dados</button></li>
+                <li><input type="button" value="Adicionar teste"></li>
+                <li><input type="button" value="Encerrar teste"></li>
+                <li><input type="button" value="Editar teste"></li>
+                <li><input type="button" value="Visualizar dados"></li>
             </ul>
         </div>
         <div id="info">
@@ -51,11 +58,11 @@
                 </thead>
                 <tbody>
                 {% if envios %}
-                    {% for envio in envios %}
+                    {% for envio_item in envios %}
                         <tr>
-                            <td>{{ envio.clienteid }}</td>
-                            <td>{{ envio.cameraid }}</td>
-                            <td>{{ envio.acesso }}</td>
+                            <td>{{ envio_item.clienteid }}</td>
+                            <td>{{ envio_item.cameraid }}</td>
+                            <td>{{ envio_item.acesso }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}
@@ -64,7 +71,7 @@
                 </tbody>
             </table>
         </div>
-    </main>
+    </section>
     <footer>
         <p>Todos os direitos reservados.</p>
     </footer>

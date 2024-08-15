@@ -45,10 +45,9 @@ section#Topo div#layer{
 }
 section#Topo header{
     position: relative;
-    width: 90%;
     z-index: 2;
+    padding-bottom: 20px;
     border-bottom: 2px solid white;
-    margin: 0 5%;
 }
 section#Topo header div#logo{
     position: relative;
@@ -81,9 +80,9 @@ section#Topo header div#Menu ul li:hover{
 /* Section Main */
 section#Main{
     width: 90%;
-    height: 80%;
+    height: 70%;
     position: relative;
-    margin: 0 5%;
+    margin: 4%;
 
     background-color: #000000;
 }
@@ -93,6 +92,7 @@ section#Main div#botoes{
     float: left;
     height: 100%;
     width: 200px;
+    background-color: #000000;
 }
 section#Main div#botoes ul{
     list-style: none;

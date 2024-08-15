@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -18,9 +19,18 @@ def index():
             return render_template('index.html', show_error=show_error)
     return render_template('index.html', show_error=show_error)
 
-@app.route('/envios')
+@app.route('/envios', methods=['GET', 'POST'])
 def envios():
-    return render_template('Envios.html')  
+    banco = "envio"
+    ip = "10.100.68.253"
+    senha = "Camerasip135."
+    results = None
+    if connect_to_db(banco, ip, senha):
+        results = fetch_envios_data(banco, ip, senha)
+        print(results)
+        return render_template('Envios.html', envios=results)
+    else:
+        return "Erro na conexão com o banco de dadossss"
 
 @app.route('/cameras')
 def cameras():
@@ -35,37 +45,43 @@ def historico():
     return render_template('Historico.html')  
 
 def connect_to_db(banco, ip, senha):
-        # Configurações do banco de dados
     db_config = {
-        'user': 'seu_usuario',
+        'user': 'root',
         'password': senha,
         'host': ip,
         'database': banco
     }
-    if banco == "envios" and ip == "10.100.68.253" and senha=="Camerasip135.":
+    if banco == "envio" and ip == "10.100.68.253" and senha == "Camerasip135.":
         try: 
-            # Conectar ao banco de dados
+            print("helo")
             conn = mysql.connector.connect(**db_config)
-            cursor = conn.cursor(dictionary=True)
-
-            # Consulta SQL
-            query = "SELECT clienteid, cameraid, acesso FROM envios"
-            cursor.execute(query)
-
-            # Buscar todos os resultados
-            results = cursor.fetchall()
-
-            # Fechar a conexão
-            cursor.close()
             conn.close()
-
-            # Renderizar a página HTML com os dados
             return True
-
         except mysql.connector.Error as err:
-            return f"Erro: {err}"
+            print(err)
+            return False
     else:
         return False
-    
+
+def fetch_envios_data(banco, ip, senha):
+    db_config = {
+        'user': 'root',
+        'password': senha,
+        'host': ip,
+        'database': banco
+    }
+    try: 
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        query = "SELECT clienteid, cameraid, acesso FROM envios"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return results
+    except mysql.connector.Error as err:
+        print(f"Erro: {err}")
+        return []
+
 if __name__ == '__main__':
     app.run(debug=True)
