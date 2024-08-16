@@ -1,41 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
-
-class CameraDAO:
-    # Aqui você deve implementar todos os métodos de acesso ao banco de dados como no PHP.
-    # Para o exemplo, vamos supor que esses métodos já estão implementados.
-
-    def get_camera_id_dao(self, modelo, mac):
-        # Implemente a lógica para obter o ID da câmera
-        pass
-
-    def get_modelo_dao(self, camera_id):
-        # Implemente a lógica para obter o modelo da câmera
-        pass
-
-    def get_mac_dao(self, camera_id):
-        # Implemente a lógica para obter o MAC da câmera
-        pass
-
-    def get_cameras_dao(self):
-        # Implemente a lógica para obter a lista de câmeras
-        pass
-
-    def set_mac_dao(self, camera_id, mac):
-        # Implemente a lógica para atualizar o MAC da câmera
-        pass
-
-    def set_modelo_dao(self, camera_id, modelo):
-        # Implemente a lógica para atualizar o modelo da câmera
-        pass
-
-    def add_camera_dao(self, modelo, mac):
-        # Implemente a lógica para adicionar uma nova câmera
-        pass
-
-    def del_camera_dao(self, camera_id):
-        # Implemente a lógica para deletar uma câmera
-        pass
+from dao.CameraDAO import CameraDAO
 
 class Camera:
     def __init__(self, modelo="", mac=""):

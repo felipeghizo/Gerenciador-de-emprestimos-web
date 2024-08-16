@@ -1,4 +1,5 @@
 import sqlite3
+import mysql.connector
 
 class ClienteDAO:
     def __init__(self, nome="", telefone="", email="", numero_cliente=0, endereco=""):
@@ -41,21 +42,29 @@ class ClienteDAO:
 
     # Obtém o nome do cliente pelo ID
     def get_nome_dao(self, cliente_id):
-        sql = "SELECT nome FROM clientes WHERE clienteid = ?"
-        nome = ""
-
-        try:
-            cursor = self.connection.cursor()
+        db_config = {
+            'user': 'root',
+            'password': "Camerasip135.",
+            'host': "10.100.68.253",
+            'database': "envio"
+        }
+        try: 
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            sql = "SELECT nome FROM clientes WHERE clienteid = %s"
             cursor.execute(sql, (cliente_id,))
             nome = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            
             if nome:
-                nome = nome[0]
+                return nome['nome']
             else:
                 print(f"Nenhum nome encontrado com o id: {cliente_id}")
-        except sqlite3.Error as e:
+                return ""
+        except mysql.connector.Error as e:
             print(f"Erro ao buscar o nome do cliente: {e}")
-
-        return nome
+            return ""
 
     # Obtém o telefone do cliente pelo ID
     def get_telefone(self, cliente_id):

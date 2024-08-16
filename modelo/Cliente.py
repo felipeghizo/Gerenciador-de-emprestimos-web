@@ -1,65 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
+from dao.ClienteDAO import ClienteDAO
 
-class ClienteDAO:
-    # Aqui você deve implementar todos os métodos de acesso ao banco de dados como no PHP.
-    # Para o exemplo, vamos supor que esses métodos já estão implementados.
-
-    def get_cliente_id_dao(self, nome, numero_cliente):
-        # Implemente a lógica para obter o ID do cliente
-        pass
-
-    def get_nome_dao(self, cliente_id):
-        # Implemente a lógica para obter o nome do cliente
-        pass
-
-    def get_telefone_dao(self, cliente_id):
-        # Implemente a lógica para obter o telefone do cliente
-        pass
-
-    def get_email_dao(self, cliente_id):
-        # Implemente a lógica para obter o e-mail do cliente
-        pass
-
-    def get_endereco_dao(self, cliente_id):
-        # Implemente a lógica para obter o endereço do cliente
-        pass
-
-    def get_numero_cliente_dao(self, cliente_id):
-        # Implemente a lógica para obter o número do cliente
-        pass
-
-    def get_clientes_dao(self):
-        # Implemente a lógica para obter a lista de clientes
-        pass
-
-    def set_nome_dao(self, cliente_id, nome):
-        # Implemente a lógica para atualizar o nome do cliente
-        pass
-
-    def set_telefone_dao(self, cliente_id, telefone):
-        # Implemente a lógica para atualizar o telefone do cliente
-        pass
-
-    def set_email_dao(self, cliente_id, email):
-        # Implemente a lógica para atualizar o e-mail do cliente
-        pass
-
-    def set_endereco_dao(self, cliente_id, endereco):
-        # Implemente a lógica para atualizar o endereço do cliente
-        pass
-
-    def set_numero_cliente_dao(self, cliente_id, numero_cliente):
-        # Implemente a lógica para atualizar o número do cliente
-        pass
-
-    def add_cliente_dao(self, nome, telefone, email, numero_cliente, endereco):
-        # Implemente a lógica para adicionar um novo cliente
-        pass
-
-    def del_cliente_dao(self, cliente_id):
-        # Implemente a lógica para deletar um cliente
-        pass
 
 class Cliente:
     def __init__(self, nome="", telefone="", email="", numero_cliente=0, endereco=""):

@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
+from modelo.Cliente import Cliente 
+from modelo.Camera import Camera 
 
+cliente = Cliente()
+camera = Camera()
 
 app = Flask(__name__)
 
@@ -78,6 +82,14 @@ def fetch_envios_data(banco, ip, senha):
         results = cursor.fetchall()
         cursor.close()
         conn.close()
+
+        # Atualizando o dicionário com o nome correspondente ao ID do cliente
+        for obj in results:
+            if 'clienteid' in obj:
+                obj['clienteid'] = cliente.get_nome_id(obj['clienteid'])
+            if 'cameraid' in obj:
+                obj['cameraid'] = camera.get_modelo_id(obj['cameraid'])
+
         return results
     except mysql.connector.Error as err:
         print(f"Erro: {err}")

@@ -1,9 +1,21 @@
 import sqlite3
+import mysql.connector
 
 class CameraDAO:
-    def __init__(self, connection):
-        self.connection = connection
+    def __init__(self, modelo="", mac=""):
+        self.modelo = modelo
+        self.mac = mac
+        self.connection = self.conectar()
 
+    def conectar(self):
+        banco = "envio.db"  # Ajuste o caminho do banco de dados conforme necessário
+        try:
+            connection = sqlite3.connect(banco)
+            return connection
+        except sqlite3.Error as e:
+            print(f"Erro ao conectar ao banco de dados: {e}")
+            return None
+        
     # Obtém o ID da câmera
     def get_camera_id(self, modelo_editar, mac_editar):
         sql = "SELECT COUNT(*) AS total FROM cameras WHERE modelo = ? AND MAC = ?"
@@ -26,22 +38,30 @@ class CameraDAO:
         return camera_id
 
     # Obtém o modelo da câmera pelo ID
-    def get_modelo(self, camera_id):
-        sql = "SELECT modelo FROM cameras WHERE cameraid = ?"
-        modelo = ""
-
-        try:
-            cursor = self.connection.cursor()
+    def get_modelo_dao(self, camera_id):
+        db_config = {
+            'user': 'root',
+            'password': "Camerasip135.",
+            'host': "10.100.68.253",
+            'database': "envio"
+        }
+        try: 
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            sql = "SELECT modelo FROM cameras WHERE cameraid = %s"
             cursor.execute(sql, (camera_id,))
             modelo = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            
             if modelo:
-                modelo = modelo[0]
+                return modelo['modelo']
             else:
                 print(f"Nenhum modelo encontrado com o id: {camera_id}")
-        except sqlite3.Error as e:
+                return ""
+        except mysql.connector.Error as e:
             print(f"Erro ao buscar o modelo da câmera: {e}")
-
-        return modelo
+            return ""
 
     # Obtém o MAC da câmera pelo ID
     def get_mac(self, camera_id):
