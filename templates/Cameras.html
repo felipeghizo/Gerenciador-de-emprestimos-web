@@ -17,7 +17,7 @@
             <header>
                 <div class="clear"></div>
                 <div id="logo">
-                    <h1>Bancos de dados EAG</h1>
+                    <h1>Banco de dados LCAP</h1>
                 </div>
                 <div id="Menu">
                     <ul>
@@ -32,7 +32,44 @@
         </div>
     </section>
     <section id="Main">
-        <div id="info"></div>
+        <div id="botoes">
+            <ul>
+                <li><input type="button" value="Adicionar câmera"></li>
+                <li><input type="button" value="Excluir câmera"></li>
+                <li><input type="button" value="Editar câmera"></li>
+            </ul>
+        </div>
+        <div id="info">
+            <div id="table-tittle">
+                <div id="look-for-info">
+                    <input type="text" placeholder="Dados">
+                    <button type="button">Procurar</button>
+                </div>
+                <h3>Câmeras</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Modelo</th>
+                        <th>MAC</th>
+                        <th>Serial</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if cameras %}
+                    {% for camera_item in cameras %}
+                        <tr>
+                            <td>{{ camera_item.cameraid }}</td>
+                            <td>{{ camera_item.modelo }}</td>
+                            <td>{{ camera_item.MAC }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="3">Nenhum registro encontrado</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
     </section>
 </body>
 <footer>

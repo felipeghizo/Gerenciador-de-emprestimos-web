@@ -81,11 +81,78 @@ section#Topo header div#Menu ul li:hover{
 /* Section Main */
 section#Main{
     width: 90%;
-    height: 80%;
+    height: 70%;
     position: relative;
-    margin: 0 5%;
+    margin: 4%;
 
     background-color: #000000;
+}
+section#Main div#botoes{
+
+    position: relative;
+    float: left;
+    height: 100%;
+    width: 200px;
+    background-color: #000000;
+}
+section#Main div#botoes ul{
+    list-style: none;
+}
+
+section#Main div#botoes ul li{
+    margin: 20% 10%;
+}
+section#Main div#botoes ul li input{
+    width: 150px;
+    height: 30px;
+    cursor: pointer;
+    background-color: rgb(122, 122, 122);
+    border-radius: 3px;
+    border: none;
+    color: white;
+}
+section#Main div#botoes ul li input:hover{
+    background-color: rgb(39, 39, 39);
+}
+section#Main div#info{
+    position: relative;
+    float: right;
+    width: calc(100% - 200px);
+    height: 100%;
+    background-color: #828a87;
+}
+section#Main div#info div#table-tittle{
+    position: relative;
+    width: 98%;
+    height: 10%;
+    margin: 2% ;
+}
+section#Main div#info div#table-tittle h3{
+    color: white; 
+    margin-right: calc(50% - 50px); 
+    float: right;
+}
+section#Main div#info div#table-tittle div#look-for-info{
+    position: relative;
+    float: left;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #00422a;
+}
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
 footer{

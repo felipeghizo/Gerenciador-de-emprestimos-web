@@ -38,7 +38,16 @@ def envios():
 
 @app.route('/cameras')
 def cameras():
-    return render_template('Cameras.html')  
+    banco = "envio"
+    ip = "10.100.68.253"
+    senha = "Camerasip135."
+    results = None
+    if connect_to_db(banco, ip, senha):
+        results = fetch_envios_data(banco, ip, senha)
+        print(results)
+        return render_template('Cameras.html', envios=results)
+    else:
+        return "Erro na conexão com o banco de dadossss" 
 
 @app.route('/clientes')
 def clientes():
