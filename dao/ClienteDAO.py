@@ -67,7 +67,7 @@ class ClienteDAO:
             return ""
 
     # Obtém o telefone do cliente pelo ID
-    def get_telefone(self, cliente_id):
+    def get_telefone_dao(self, cliente_id):
         sql = "SELECT telefone FROM clientes WHERE clienteid = ?"
         telefone = ""
 

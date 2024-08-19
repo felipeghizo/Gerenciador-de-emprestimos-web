@@ -32,7 +32,44 @@
         </div>
     </section>
     <section id="Main">
-        <div id="info"></div>
+        <div id="botoes">
+            <ul>
+                <li><input type="button" value="Adicionar cliente"></li>
+                <li><input type="button" value="Excluir cliente"></li>
+                <li><input type="button" value="Editar cliente"></li>
+            </ul>
+        </div>
+        <div id="info">
+            <div id="table-tittle">
+                <div id="look-for-info">
+                    <input type="text" placeholder="Dados">
+                    <button type="button">Procurar</button>
+                </div>
+                <h3>Clientes</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID intelbras</th>
+                        <th>Nome</th>
+                        <th>telefone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if clientes %}
+                    {% for cliente_item in clientes %}
+                        <tr>
+                            <td>{{ cliente_item.numero_cliente }}</td>
+                            <td>{{ cliente_item.nome }}</td>
+                            <td>{{ cliente_item.telefone }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="3">Nenhum registro encontrado</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
     </section>
 </body>
 <footer>

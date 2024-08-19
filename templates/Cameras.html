@@ -52,14 +52,12 @@
                     <tr>
                         <th>Modelo</th>
                         <th>MAC</th>
-                        <th>Serial</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% if cameras %}
                     {% for camera_item in cameras %}
                         <tr>
-                            <td>{{ camera_item.cameraid }}</td>
                             <td>{{ camera_item.modelo }}</td>
                             <td>{{ camera_item.MAC }}</td>
                         </tr>

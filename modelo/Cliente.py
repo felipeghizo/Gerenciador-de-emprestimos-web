@@ -25,7 +25,10 @@ class Cliente:
     def get_telefone(self):
         cliente_id = self.get_cliente_id(self.nome, self.numero_cliente)
         return self.cliente_dao.get_telefone_dao(cliente_id)
-
+    
+    def get_telefone_id(self, cliente_id):
+        return self.cliente_dao.get_telefone_dao(cliente_id)
+    
     def get_email(self):
         cliente_id = self.get_cliente_id(self.nome, self.numero_cliente)
         return self.cliente_dao.get_email_dao(cliente_id)

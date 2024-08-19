@@ -64,7 +64,7 @@ class CameraDAO:
             return ""
 
     # Obtém o MAC da câmera pelo ID
-    def get_mac(self, camera_id):
+    def get_mac_dao(self, camera_id):
         sql = "SELECT MAC FROM cameras WHERE cameraid = ?"
         mac = ""
 
