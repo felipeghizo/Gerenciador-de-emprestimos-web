@@ -139,7 +139,7 @@ def fetch_cameras_data(banco, ip, senha):
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT modelo, MAC FROM cameras"
+        query = "SELECT modelo, MAC, Cloud FROM cameras"
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
@@ -149,7 +149,8 @@ def fetch_cameras_data(banco, ip, senha):
     except mysql.connector.Error as err:
         print(f"Erro: {err}")
         return []
-    
+
+# CRUD CLIENTE  
 @app.route('/add_cliente', methods=['POST'])
 def add_cliente():
     nome = request.form.get('nome')
@@ -234,7 +235,6 @@ def delete_cliente():
             'database': banco
         }
         try:
-            print(cliente_id)
             if cliente_tem_envios(cliente_id):
                 return "Não é possível excluir o cliente porque ele está associado a envios ativos.", 400
 
@@ -258,8 +258,6 @@ def delete_cliente():
             return "Erro ao excluir cliente", 500
     else:
         return "Erro na conexão com o banco de dados", 500
-
-import mysql.connector
 
 def cliente_tem_envios(numero_cliente):
     db_config = {
@@ -299,6 +297,172 @@ def cliente_tem_envios(numero_cliente):
         print(f"Erro: {err}")
         return False
 
+# CRUD CAMERA
+@app.route('/add_camera', methods=['POST'])
+def add_camera():
+    modelo = request.form.get('modelo')
+    cloud = request.form.get('Cloud')
+    mac = request.form.get('MAC')
 
+    banco = "envio"
+    ip = "10.100.68.253"
+    senha = "Camerasip135."
+
+    if connect_to_db(banco, ip, senha):
+        db_config = {
+            'user': 'root',
+            'password': senha,
+            'host': ip,
+            'database': banco
+        }
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            query = "INSERT INTO cameras (modelo, Cloud, MAC) VALUES (%s, %s, %s)"
+            cursor.execute(query, (modelo, cloud, mac))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return redirect(url_for('cameras'))
+        except mysql.connector.Error as err:
+            print(f"Erro: {err}")
+            return "Erro ao adicionar câmera", 500
+    else:
+        return "Erro na conexão com o banco de dados", 500
+
+@app.route('/edit_camera', methods=['POST'])
+def edit_camera():
+    modelo = request.form.get('edit_modelo')
+    cloud = request.form.get('edit_Cloud')
+    mac = request.form.get('edit_MAC')
+    print(cloud)
+    banco = "envio"
+    ip = "10.100.68.253"
+    senha = "Camerasip135."
+
+    if connect_to_db(banco, ip, senha):
+        db_config = {
+            'user': 'root',
+            'password': senha,
+            'host': ip,
+            'database': banco
+        }
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            print(cloud)
+            # Verifica se a câmera existe
+            query1 = """
+                SELECT cameraid 
+                FROM cameras 
+                WHERE Cloud = %s 
+            """
+            cursor.execute(query1, (cloud,))
+            result = cursor.fetchone()
+            
+            if result:
+                # Se a câmera for encontrada, realiza a atualização
+                query2 = """
+                    UPDATE cameras
+                    SET modelo = %s, Cloud = %s, MAC = %s
+                    WHERE cameraid = %s
+                """
+                cursor.execute(query2, (modelo, cloud, mac,))
+                conn.commit()
+            else:
+                # Se a câmera não for encontrada, retorna um erro
+                cursor.close()
+                conn.close()
+                return "Câmera não encontrada", 404
+            
+            cursor.close()
+            conn.close()
+            return redirect(url_for('cameras'))
+        except mysql.connector.Error as err:
+            print(f"Erro: {err}")
+            return "Erro ao editar câmera", 500
+    else:
+        return "Erro na conexão com o banco de dados", 500
+
+'''
+@app.route('/delete_cliente', methods=['POST'])
+def delete_cliente():
+    cliente_id = request.form.get('id')
+
+    banco = "envio"
+    ip = "10.100.68.253"
+    senha = "Camerasip135."
+
+    if connect_to_db(banco, ip, senha):
+        db_config = {
+            'user': 'root',
+            'password': senha,
+            'host': ip,
+            'database': banco
+        }
+        try:
+            print(cliente_id)
+            if cliente_tem_envios(cliente_id):
+                return "Não é possível excluir o cliente porque ele está associado a envios ativos.", 400
+
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            
+            # Primeiro, excluir os registros dependentes
+            delete_envios_query = "DELETE FROM envios WHERE clienteid = %s"
+            cursor.execute(delete_envios_query, (cliente_id,))
+            
+            # Depois, excluir o cliente
+            delete_cliente_query = "DELETE FROM clientes WHERE numero_cliente = %s"
+            cursor.execute(delete_cliente_query, (cliente_id,))
+            
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return '', 204
+        except mysql.connector.Error as err:
+            print(f"Erro: {err}")
+            return "Erro ao excluir cliente", 500
+    else:
+        return "Erro na conexão com o banco de dados", 500
+
+def cliente_tem_envios(numero_cliente):
+    db_config = {
+        'user': 'root',
+        'password': 'Camerasip135.',
+        'host': '10.100.68.253',
+        'database': 'envio'
+    }
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Verifica se o cliente existe e obtém o clienteid
+        query1 = "SELECT clienteid FROM clientes WHERE numero_cliente = %s"
+        cursor.execute(query1, (numero_cliente,))
+        result = cursor.fetchone()
+        
+        if result:
+            clienteid = result[0]
+        else:
+            # Se o cliente não for encontrado, retorna False
+            cursor.close()
+            conn.close()
+            return False
+        
+        # Verifica se há envios associados ao cliente
+        query2 = "SELECT COUNT(*) FROM envios WHERE clienteid = %s"
+        cursor.execute(query2, (clienteid,))
+        count = cursor.fetchone()[0]
+
+        cursor.close()
+        conn.close()
+
+        return count > 0
+
+    except mysql.connector.Error as err:
+        print(f"Erro: {err}")
+        return False
+'''
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

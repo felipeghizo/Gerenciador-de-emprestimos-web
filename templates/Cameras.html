@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../static/css/style_cameras.css"/>
-    <title>Cameras</title>
+    <title>Câmeras</title>
 </head>
 <body>
     <section id="Topo">
@@ -17,7 +17,7 @@
             <header>
                 <div class="clear"></div>
                 <div id="logo">
-                    <h1>Banco de dados LCAP</h1>
+                    <h1>Bancos de dados EAG</h1>
                 </div>
                 <div id="Menu">
                     <ul>
@@ -34,45 +34,192 @@
     <section id="Main">
         <div id="botoes">
             <ul>
-                <li><input type="button" value="Adicionar câmera"></li>
-                <li><input type="button" value="Excluir câmera"></li>
-                <li><input type="button" value="Editar câmera"></li>
+                <li><input type="button" id="addClientBtn" value="Adicionar câmera"></li>
+                <li><input type="button" id="deleteClientBtn" value="Excluir câmera"></li>
+                <li><input type="button" id="editCamBtn" value="Editar câmera"></li>
             </ul>
         </div>
         <div id="info">
             <div id="table-tittle">
                 <div id="look-for-info">
-                    <input type="text" placeholder="Dados">
-                    <button type="button">Procurar</button>
-                </div>
+                    <input type="text" id="searchInput" placeholder="Dados">
+                    <button id="searchBtn" type="button">Procurar</button>
+                    <button id="clearBtn" type="button">Limpar</button>
+                </div>                
                 <h3>Câmeras</h3>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Modelo</th>
-                        <th>MAC</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% if cameras %}
-                    {% for camera_item in cameras %}
+            <div class="table-container">
+                <table id="camsTable">
+                    <thead>
                         <tr>
-                            <td>{{ camera_item.modelo }}</td>
-                            <td>{{ camera_item.MAC }}</td>
+                            <th>Modelo</th>
+                            <th>Cloud</th>
+                            <th>Mac</th>
                         </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr><td colspan="3">Nenhum registro encontrado</td></tr>
-                {% endif %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% if cameras %}
+                            {% for camera_item in cameras %}
+                                <tr class="cams-table-row" data-id="{{ camera_item.cameraid }}">
+                                    <td>{{ camera_item.modelo }}</td>
+                                    <td>{{ camera_item.Cloud }}</td>
+                                    <td>{{ camera_item.MAC }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="3">Nenhum registro encontrado</td></tr>
+                        {% endif %}
+                    </tbody>              
+                </table>
+            </div>
         </div>
     </section>
+
+    <!-- Modal de Adição -->
+    <div id="addCamModal" class="modal">
+        <div class="modal-content">
+            <span class="close" data-modal="addCamModal">&times;</span>
+            <h2>Adicionar Câmera</h2>
+            <form id="addClientForm" method="POST" action="{{ url_for('add_camera') }}">
+                <label for="modelo">Modelo:</label>
+                <input type="text" id="modelo" name="modelo" required><br><br>
+                <label for="Cloud">Cloud:</label>
+                <input type="text" id="Cloud" name="Cloud" required><br><br>
+                <label for="MAC">MAC:</label>
+                <input type="text" id="MAC" name="MAC" required><br><br>
+                <input type="submit" value="Adicionar">
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editCamModal" class="modal">
+        <div class="modal-content">
+            <span class="close" data-modal="editCamModal">&times;</span>
+            <h2>Editar Câmera</h2>
+            <form id="editCamForm" method="POST" action="{{ url_for('edit_camera') }}">
+                <label for="edit_modelo">Modelo:</label>
+                <input type="text" id="edit_modelo" name="nome" required><br><br>
+                <label for="edit_Cloud">Cloud:</label>
+                <input type="text" id="edit_Cloud" name="telefone" required><br><br>
+                <label for="edit_MAC">MAC:</label>
+                <input type="text" id="edit_MAC" name="telefone" required><br><br>
+                <input type="submit" value="Atualizar">
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script type="text/javascript" src="js/menu_mobile.js"></script>
+    <script>
+        // Modal handling
+        var modals = document.querySelectorAll('.modal');
+        var btnAdd = document.getElementById("addClientBtn");
+        var btnEdit = document.getElementById("editCamBtn");
+        var btnDelete = document.getElementById("deleteClientBtn");
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modal) {
+            modal.style.display = "none";
+        }
+
+        modals.forEach(function(modal) {
+            var closeSpan = modal.querySelector('.close');
+            closeSpan.onclick = function() {
+                closeModal(modal);
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    closeModal(modal);
+                }
+            }
+        });
+
+        btnAdd.onclick = function() {
+            openModal('addCamModal');
+        }
+
+        var selectedRow = null;
+
+        document.getElementById('camsTable').addEventListener('click', function(e) {
+            var target = e.target;
+            while (target && target.nodeName !== 'TR') {
+                target = target.parentNode;
+            }
+            if (target && target.nodeName === 'TR') {
+                if (selectedRow) {
+                    selectedRow.classList.remove('selected');
+                }
+                selectedRow = target;
+                selectedRow.classList.add('selected');
+            }
+        });
+
+        btnEdit.onclick = function() {
+            if (selectedRow) {
+                var Cloud = selectedRow.children[1].textContent;
+
+                document.getElementById('edit_Cloud').value = Cloud;
+
+                openModal('editCamModal');
+            } else {
+                alert('Nenhum cliente selecionado.');
+            }
+        }
+
+        btnDelete.onclick = function() {
+            if (selectedRow) {
+                var id = selectedRow.getAttribute('data-id');
+                if (confirm('Tem certeza que deseja excluir o cliente com ID ' + id + '?')) {
+                    $.post('{{ url_for("delete_cliente") }}', { id: id })
+                        .done(function() {
+                            location.reload(); // Recarregar a página para refletir as mudanças
+                        })
+                        .fail(function(jqXHR) {
+                            alert('Erro: ' + jqXHR.responseText);
+                        });
+                }
+            } else {
+                alert('Nenhum cliente selecionado.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var tableRows = document.querySelectorAll('.cams-table-row');
+            var selectedRow = null;
+
+            // Função para filtrar a tabela
+            function filterTable() {
+                var searchInput = document.getElementById('searchInput').value.toLowerCase();
+                tableRows.forEach(function(row) {
+                    var cells = row.querySelectorAll('td');
+                    var rowVisible = false;
+                    cells.forEach(function(cell) {
+                        if (cell.textContent.toLowerCase().includes(searchInput)) {
+                            rowVisible = true;
+                        }
+                    });
+                    row.style.display = rowVisible ? '' : 'none';
+                    var infoRow = row.nextElementSibling;
+                });
+            }
+
+            // Adiciona um evento de clique para o botão "Procurar"
+            document.getElementById('searchBtn').addEventListener('click', filterTable);            
+        });
+
+        // Atualiza a página
+        document.getElementById('clearBtn').addEventListener('click', function(){
+            window.location.reload();
+        });
+
+    </script>
 </body>
 <footer>
     <p>Todos os direitos reservados.</p>
 </footer>
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-<script type="text/javascript" src="js/menu_mobile.js"></script>
 </html>
