@@ -34,8 +34,8 @@
     <section id="Main">
         <div id="botoes">
             <ul>
-                <li><input type="button" id="addClientBtn" value="Adicionar câmera"></li>
-                <li><input type="button" id="deleteClientBtn" value="Excluir câmera"></li>
+                <li><input type="button" id="addCamBtn" value="Adicionar câmera"></li>
+                <li><input type="button" id="deleteCamBtn" value="Excluir câmera"></li>
                 <li><input type="button" id="editCamBtn" value="Editar câmera"></li>
             </ul>
         </div>
@@ -61,8 +61,9 @@
                         {% if cameras %}
                             {% for camera_item in cameras %}
                                 <tr class="cams-table-row" data-id="{{ camera_item.cameraid }}">
+                                    <td id="hidden-td">{{ camera_item.cameraid }}</td>
                                     <td>{{ camera_item.modelo }}</td>
-                                    <td>{{ camera_item.Cloud }}</td>
+                                    <td id="old_Cloud">{{ camera_item.Cloud }}</td>
                                     <td>{{ camera_item.MAC }}</td>
                                 </tr>
                             {% endfor %}
@@ -80,7 +81,7 @@
         <div class="modal-content">
             <span class="close" data-modal="addCamModal">&times;</span>
             <h2>Adicionar Câmera</h2>
-            <form id="addClientForm" method="POST" action="{{ url_for('add_camera') }}">
+            <form id="addCamForm" method="POST" action="{{ url_for('add_camera') }}">
                 <label for="modelo">Modelo:</label>
                 <input type="text" id="modelo" name="modelo" required><br><br>
                 <label for="Cloud">Cloud:</label>
@@ -98,12 +99,13 @@
             <span class="close" data-modal="editCamModal">&times;</span>
             <h2>Editar Câmera</h2>
             <form id="editCamForm" method="POST" action="{{ url_for('edit_camera') }}">
+                <input type="hidden" id="cameraid" name="edit_id">
                 <label for="edit_modelo">Modelo:</label>
-                <input type="text" id="edit_modelo" name="nome" required><br><br>
+                <input type="text" id="edit_Modelo" name="Modelo" required><br><br>
                 <label for="edit_Cloud">Cloud:</label>
-                <input type="text" id="edit_Cloud" name="telefone" required><br><br>
+                <input type="text" id="edit_Cloud" name="Cloud" required><br><br>
                 <label for="edit_MAC">MAC:</label>
-                <input type="text" id="edit_MAC" name="telefone" required><br><br>
+                <input type="text" id="edit_MAC" name="MAC" required><br><br>
                 <input type="submit" value="Atualizar">
             </form>
         </div>
@@ -114,12 +116,17 @@
     <script>
         // Modal handling
         var modals = document.querySelectorAll('.modal');
-        var btnAdd = document.getElementById("addClientBtn");
+        var btnAdd = document.getElementById("addCamBtn");
         var btnEdit = document.getElementById("editCamBtn");
-        var btnDelete = document.getElementById("deleteClientBtn");
+        var btnDelete = document.getElementById("deleteCamBtn");
 
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = "block";
+            var modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
+            } else {
+                console.error('Modal não encontrado: ' + modalId);
+            }
         }
 
         function closeModal(modal) {
@@ -161,9 +168,15 @@
 
         btnEdit.onclick = function() {
             if (selectedRow) {
-                var Cloud = selectedRow.children[1].textContent;
+                var ip = selectedRow.children[0].textContent;
+                var Modelo = selectedRow.children[1].textContent;
+                var Cloud = selectedRow.children[2].textContent;
+                var MAC = selectedRow.children[3].textContent;
 
+                document.getElementById('cameraid').value = ip;
+                document.getElementById('edit_Modelo').value = Modelo;
                 document.getElementById('edit_Cloud').value = Cloud;
+                document.getElementById('edit_MAC').value = MAC;
 
                 openModal('editCamModal');
             } else {
@@ -173,9 +186,9 @@
 
         btnDelete.onclick = function() {
             if (selectedRow) {
-                var id = selectedRow.getAttribute('data-id');
-                if (confirm('Tem certeza que deseja excluir o cliente com ID ' + id + '?')) {
-                    $.post('{{ url_for("delete_cliente") }}', { id: id })
+                var id = selectedRow.children[0].textContent;
+                if (confirm('Tem certeza que deseja excluir o câmera com ID ' + id + '?')) {
+                    $.post('{{ url_for("delete_camera") }}', { id: id })
                         .done(function() {
                             location.reload(); // Recarregar a página para refletir as mudanças
                         })
@@ -184,7 +197,7 @@
                         });
                 }
             } else {
-                alert('Nenhum cliente selecionado.');
+                alert('Nenhuma câmera selecionado.');
             }
         }
 
