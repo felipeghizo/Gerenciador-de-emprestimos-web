@@ -161,7 +161,7 @@ th {
 tr:nth-child(even) {
     background-color: #c5c5c5;
 }
-#hidden-td{ display: none;}
+#hidden-td{display: none;}
 
 footer{
     width: 100%;

@@ -118,7 +118,7 @@ def fetch_clientes_data(banco, ip, senha):
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT nome, telefone, numero_cliente, endereco, email FROM clientes"
+        query = "SELECT clienteid, nome, telefone, numero_cliente, endereco, email FROM clientes"
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
@@ -153,10 +153,10 @@ def fetch_cameras_data(banco, ip, senha):
 # CRUD CLIENTE  
 @app.route('/add_cliente', methods=['POST'])
 def add_cliente():
-    nome = request.form.get('nome')
-    telefone = request.form.get('telefone')
-    numero_cliente = request.form.get('numero_cliente')
-
+    nome = request.form.get('add_nome')
+    numero_cliente = request.form.get('add_numero_cliente')
+    telefone = request.form.get('add_telefone')
+    
     banco = "envio"
     ip = "10.100.68.253"
     senha = "Camerasip135."
@@ -185,10 +185,11 @@ def add_cliente():
     
 @app.route('/edit_cliente', methods=['POST'])
 def edit_cliente():
-    nome = request.form.get('nome')
-    telefone = request.form.get('telefone')
-    numero_cliente = request.form.get('numero_cliente')
-
+    nome = request.form.get('Nome')
+    telefone = request.form.get('Numero_intelbras')
+    numero_cliente = request.form.get('Telefone')
+    clienteid = request.form.get('edit_id')
+    print(clienteid)
     banco = "envio"
     ip = "10.100.68.253"
     senha = "Camerasip135."
@@ -205,10 +206,10 @@ def edit_cliente():
             cursor = conn.cursor()
             query = """
                 UPDATE clientes
-                SET nome = %s, telefone = %s
-                WHERE numero_cliente = %s
+                SET nome = %s, telefone = %s, numero_cliente = %s
+                WHERE clienteid = %s
             """
-            cursor.execute(query, (nome, telefone, numero_cliente))
+            cursor.execute(query, (nome, telefone, numero_cliente, clienteid))
             conn.commit()
             cursor.close()
             conn.close()
@@ -241,12 +242,8 @@ def delete_cliente():
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
             
-            # Primeiro, excluir os registros dependentes
-            delete_envios_query = "DELETE FROM envios WHERE clienteid = %s"
-            cursor.execute(delete_envios_query, (cliente_id,))
-            
             # Depois, excluir o cliente
-            delete_cliente_query = "DELETE FROM clientes WHERE numero_cliente = %s"
+            delete_cliente_query = "DELETE FROM clientes WHERE clienteid = %s"
             cursor.execute(delete_cliente_query, (cliente_id,))
             
             conn.commit()

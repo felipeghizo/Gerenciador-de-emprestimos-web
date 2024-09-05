@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../static/css/style_clientes.css"/>
-    <title>Clientes</title>
+    <title>Câmeras</title>
 </head>
 <body>
     <section id="Topo">
@@ -37,7 +37,6 @@
                 <li><input type="button" id="addClientBtn" value="Adicionar cliente"></li>
                 <li><input type="button" id="deleteClientBtn" value="Excluir cliente"></li>
                 <li><input type="button" id="editClientBtn" value="Editar cliente"></li>
-                <!-- Adicione o botão "Visualizar dados" -->
                 <li><input type="button" id="viewClientDataBtn" value="Visualizar dados"></li>
             </ul>
         </div>
@@ -50,34 +49,37 @@
                 </div>                
                 <h3>Clientes</h3>
             </div>
-            <table id="clientsTable">
-                <thead>
-                    <tr>
-                        <th>ID intelbras</th>
-                        <th>Nome</th>
-                        <th>Telefone</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if clientes %}
-                        {% for cliente_item in clientes %}
-                            <tr class="clients-table-row" data-id="{{ cliente_item.numero_cliente }}">
-                                <td>{{ cliente_item.numero_cliente }}</td>
-                                <td>{{ cliente_item.nome }}</td>
-                                <td>{{ cliente_item.telefone }}</td>
-                            </tr>
-                            <tr class="additional-info" data-id="{{ cliente_item.numero_cliente }}">
-                                <td colspan="3">
-                                    <p>Endereço: {{ cliente_item.endereco }}</p>
-                                    <p>Email: {{ cliente_item.email }}</p>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr><td colspan="3">Nenhum registro encontrado</td></tr>
-                    {% endif %}
-                </tbody>              
-            </table>
+            <div class="table-container">
+                <table id="clientTable">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Número Intelbras</th>
+                            <th>Telefone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if clientes %}
+                            {% for cliente_item in clientes %}
+                                <tr class="clients-table-row" data-id="{{ cliente_item.clienteid }}">
+                                    <td id="hidden-td">{{ cliente_item.clienteid }}</td>
+                                    <td>{{ cliente_item.nome }}</td>
+                                    <td>{{ cliente_item.numero_cliente }}</td>
+                                    <td>{{ cliente_item.telefone }}</td>
+                                </tr>
+                                <tr class="additional-info" data-id="{{ cliente_item.numero_cliente }}">
+                                    <td colspan="4">
+                                        <p>Endereço: {{ cliente_item.endereco }}</p>
+                                        <p>Email: {{ cliente_item.email }}</p>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="4">Nenhum registro encontrado</td></tr>
+                        {% endif %}
+                    </tbody>              
+                </table>
+            </div>
         </div>
     </section>
 
@@ -85,14 +87,14 @@
     <div id="addClientModal" class="modal">
         <div class="modal-content">
             <span class="close" data-modal="addClientModal">&times;</span>
-            <h2>Adicionar Cliente</h2>
+            <h2>Adicionar cliente</h2>
             <form id="addClientForm" method="POST" action="{{ url_for('add_cliente') }}">
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" required><br><br>
-                <label for="telefone">Telefone:</label>
-                <input type="text" id="telefone" name="telefone" required><br><br>
-                <label for="numero_cliente">ID do Cliente:</label>
-                <input type="text" id="numero_cliente" name="numero_cliente" required><br><br>
+                <label for="add_nome">Nome:</label>
+                <input type="text" id="add_nome" name="add_nome" required><br><br>
+                <label for="add_numero_cliente">Número cliente:</label>
+                <input type="text" id="add_numero_cliente" name="add_numero_cliente" required><br><br>
+                <label for="add_telefone">telefone:</label>
+                <input type="text" id="add_telefone" name="add_telefone" required><br><br>
                 <input type="submit" value="Adicionar">
             </form>
         </div>
@@ -102,13 +104,15 @@
     <div id="editClientModal" class="modal">
         <div class="modal-content">
             <span class="close" data-modal="editClientModal">&times;</span>
-            <h2>Editar Cliente</h2>
+            <h2>Editar cliente</h2>
             <form id="editClientForm" method="POST" action="{{ url_for('edit_cliente') }}">
-                <input type="hidden" id="edit_cliente_id" name="numero_cliente">
+                <input type="hidden" id="edit_clienteid" name="edit_id">
                 <label for="edit_nome">Nome:</label>
-                <input type="text" id="edit_nome" name="nome" required><br><br>
+                <input type="text" id="edit_nome" name="Nome" required><br><br>
+                <label for="edit_numero_intelbras">Número Intelbras:</label>
+                <input type="text" id="edit_numero_intelbras" name="Numero_intelbras" required><br><br>
                 <label for="edit_telefone">Telefone:</label>
-                <input type="text" id="edit_telefone" name="telefone" required><br><br>
+                <input type="text" id="edit_telefone" name="Telefone" required><br><br>
                 <input type="submit" value="Atualizar">
             </form>
         </div>
@@ -124,7 +128,12 @@
         var btnDelete = document.getElementById("deleteClientBtn");
 
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = "block";
+            var modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
+            } else {
+                console.error('Modal não encontrado: ' + modalId);
+            }
         }
 
         function closeModal(modal) {
@@ -150,7 +159,7 @@
 
         var selectedRow = null;
 
-        document.getElementById('clientsTable').addEventListener('click', function(e) {
+        document.getElementById('clientTable').addEventListener('click', function(e) {
             var target = e.target;
             while (target && target.nodeName !== 'TR') {
                 target = target.parentNode;
@@ -166,13 +175,15 @@
 
         btnEdit.onclick = function() {
             if (selectedRow) {
-                var id = selectedRow.getAttribute('data-id');
-                var nome = selectedRow.children[1].textContent;
-                var telefone = selectedRow.children[2].textContent;
+                var id = selectedRow.children[0].textContent;
+                var Nome = selectedRow.children[1].textContent;
+                var Numero_intelbras = selectedRow.children[2].textContent;
+                var Telefone = selectedRow.children[3].textContent;
 
-                document.getElementById('edit_cliente_id').value = id;
-                document.getElementById('edit_nome').value = nome;
-                document.getElementById('edit_telefone').value = telefone;
+                document.getElementById('edit_clienteid').value = id;
+                document.getElementById('edit_nome').value = Nome;
+                document.getElementById('edit_numero_intelbras').value = Numero_intelbras;
+                document.getElementById('edit_telefone').value = Telefone;
 
                 openModal('editClientModal');
             } else {
@@ -182,7 +193,7 @@
 
         btnDelete.onclick = function() {
             if (selectedRow) {
-                var id = selectedRow.getAttribute('data-id');
+                var id = selectedRow.children[0].textContent;
                 if (confirm('Tem certeza que deseja excluir o cliente com ID ' + id + '?')) {
                     $.post('{{ url_for("delete_cliente") }}', { id: id })
                         .done(function() {
