@@ -191,7 +191,9 @@ def edit_cliente():
     telefone = request.form.get('Numero_intelbras')
     numero_cliente = request.form.get('Telefone')
     clienteid = request.form.get('edit_id')
-    print(clienteid)
+    endereco =  request.form.get('edit_endereco')
+    email = request.form.get('edit_email')
+
     banco = "envio"
     ip = "10.100.68.253"
     senha = "Camerasip135."
@@ -208,10 +210,10 @@ def edit_cliente():
             cursor = conn.cursor()
             query = """
                 UPDATE clientes
-                SET nome = %s, telefone = %s, numero_cliente = %s
+                SET nome = %s, telefone = %s, numero_cliente = %s, endereco = %s, email = %s
                 WHERE clienteid = %s
             """
-            cursor.execute(query, (nome, telefone, numero_cliente, clienteid))
+            cursor.execute(query, (nome, telefone, numero_cliente, endereco, email, clienteid))
             conn.commit()
             cursor.close()
             conn.close()

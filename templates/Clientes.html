@@ -117,8 +117,8 @@
                 <input type="text" id="edit_numero_intelbras" name="Numero_intelbras" required><br><br>
                 <label for="edit_telefone">Telefone:</label>
                 <input type="text" id="edit_telefone" name="Telefone" required><br><br>
-                <label for="edit_endereço">Endereço:</label>
-                <input type="text" id="edit_endereço" name="edit_endereço" required><br><br>
+                <label for="edit_endereco">Endereço:</label>
+                <input type="text" id="edit_endereco" name="edit_endereco" required><br><br>
                 <label for="edit_email">E-mail:</label>
                 <input type="text" id="edit_email" name="edit_email" required><br><br>
                 <input type="submit" value="Atualizar">
@@ -205,8 +205,23 @@
                 var Numero_intelbras = selectedRow.children[2].textContent;
                 var Telefone = selectedRow.children[3].textContent;
 
-                var Endereco 
-                var Email
+                // Supondo que selectedRow seja um elemento DOM válido
+                var dados = selectedRow.nextElementSibling.textContent.split('\n');
+                var Email;
+                var Endereco;
+                // Supondo que `dados` seja o array com as linhas
+                dados.forEach((linha) => {
+                    // Verifica se a linha contém o caractere "E"
+                    if (linha.includes('En')) {
+                        Endereco = linha.trimStart().split(" ");
+                        Endereco = Endereco.slice(1);
+                        Endereco = Endereco.map(item => item.replace(/,/g, ' '));
+                        Endereco = Endereco.join(' ');
+                    } else if (linha.includes('Em')) {
+                        Email = linha.trimStart().split(" ");
+                        Email = Email[1];
+                    }
+                });
 
                 document.getElementById('edit_clienteid').value = id;
                 document.getElementById('edit_nome').value = Nome;
