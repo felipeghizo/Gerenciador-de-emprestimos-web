@@ -95,6 +95,10 @@
                 <input type="text" id="add_numero_cliente" name="add_numero_cliente" required><br><br>
                 <label for="add_telefone">telefone:</label>
                 <input type="text" id="add_telefone" name="add_telefone" required><br><br>
+                <label for="add_endereco">Endereço:</label>
+                <input type="text" id="add_endereco" name="add_endereco" required><br><br>
+                <label for="add_email">E-mail:</label>
+                <input type="text" id="add_email" name="add_email" required><br><br>
                 <input type="submit" value="Adicionar">
             </form>
         </div>
@@ -113,6 +117,10 @@
                 <input type="text" id="edit_numero_intelbras" name="Numero_intelbras" required><br><br>
                 <label for="edit_telefone">Telefone:</label>
                 <input type="text" id="edit_telefone" name="Telefone" required><br><br>
+                <label for="edit_endereço">Endereço:</label>
+                <input type="text" id="edit_endereço" name="edit_endereço" required><br><br>
+                <label for="edit_email">E-mail:</label>
+                <input type="text" id="edit_email" name="edit_email" required><br><br>
                 <input type="submit" value="Atualizar">
             </form>
         </div>
@@ -121,6 +129,21 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script type="text/javascript" src="js/menu_mobile.js"></script>
     <script>
+
+        function colorTable(){
+            var element = document.querySelectorAll('.clients-table-row');
+            // Altera a cor de fundo
+            for(var i = 0; i < element.length; i++){
+                if (i%2 == 0){
+                    element[i].style.backgroundColor = '#e2e2e2'; 
+                }else{
+                    element[i].style.backgroundColor = '#7a7a7a'; 
+                }
+            }
+        }
+        
+        colorTable();
+
         // Modal handling
         var modals = document.querySelectorAll('.modal');
         var btnAdd = document.getElementById("addClientBtn");
@@ -167,10 +190,12 @@
             if (target && target.nodeName === 'TR') {
                 if (selectedRow) {
                     selectedRow.classList.remove('selected');
+                    colorTable();
                 }
                 selectedRow = target;
                 selectedRow.classList.add('selected');
-            }
+                selectedRow.style.backgroundColor = '#5f5f5f';
+            } 
         });
 
         btnEdit.onclick = function() {
@@ -180,10 +205,15 @@
                 var Numero_intelbras = selectedRow.children[2].textContent;
                 var Telefone = selectedRow.children[3].textContent;
 
+                var Endereco 
+                var Email
+
                 document.getElementById('edit_clienteid').value = id;
                 document.getElementById('edit_nome').value = Nome;
                 document.getElementById('edit_numero_intelbras').value = Numero_intelbras;
                 document.getElementById('edit_telefone').value = Telefone;
+                document.getElementById('edit_endereco').value = Endereco;
+                document.getElementById('edit_email').value = Email;
 
                 openModal('editClientModal');
             } else {

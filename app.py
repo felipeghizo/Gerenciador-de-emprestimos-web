@@ -156,6 +156,8 @@ def add_cliente():
     nome = request.form.get('add_nome')
     numero_cliente = request.form.get('add_numero_cliente')
     telefone = request.form.get('add_telefone')
+    endereco = request.form.get('add_endereco')
+    email = request.form.get('add_email')
     
     banco = "envio"
     ip = "10.100.68.253"
@@ -171,8 +173,8 @@ def add_cliente():
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
-            query = "INSERT INTO clientes (nome, telefone, numero_cliente) VALUES (%s, %s, %s)"
-            cursor.execute(query, (nome, telefone, numero_cliente))
+            query = "INSERT INTO clientes (nome, telefone, numero_cliente, endereco, email) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(query, (nome, telefone, numero_cliente, endereco, email))
             conn.commit()
             cursor.close()
             conn.close()

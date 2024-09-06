@@ -158,8 +158,11 @@ th {
     background-color: #50cc98;
     text-align: center;
 }
+tr:nth-child(odd) {
+    background-color: #e2e2e2;
+}
 tr:nth-child(even) {
-    background-color: #c5c5c5;
+    background-color: #7a7a7a;
 }
 #hidden-td{display: none;}
 
@@ -210,7 +213,7 @@ footer p{
     cursor: pointer;
 }
 
-.selected, tr:nth-child(even).selected {
+.selected, tr:nth-child(even).selected, tr:nth-child(odd).selected {
     background-color: #5f5f5f;
 }
 
