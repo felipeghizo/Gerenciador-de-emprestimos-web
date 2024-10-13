@@ -4,7 +4,7 @@ from Model.cliente import Cliente
 from Model.camera import Camera 
 
 # Muda o diretório de templates para 'view'
-app = Flask(__name__, template_folder='View')
+app = Flask(__name__, template_folder='View', static_folder='View/Style')
 
 cliente = Cliente()
 camera = Camera()
@@ -140,12 +140,11 @@ def fetch_cameras_data(banco, ip, senha):
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT cameraid, modelo, MAC FROM cameras"
+        query = "SELECT cameraid, modelo, Cloud, MAC FROM cameras"
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
         conn.close()
-
         return results
     except mysql.connector.Error as err:
         print(f"Erro: {err}")
@@ -305,7 +304,6 @@ def add_camera():
     modelo = request.form.get('modelo')
     cloud = request.form.get('Cloud')
     mac = request.form.get('MAC')
-    cam_id = request.form.get('cameraid')
 
     banco = "envio"
     ip = "192.168.1.114"
@@ -321,8 +319,8 @@ def add_camera():
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
-            query = "INSERT INTO cameras (modelo, MAC) VALUES (%s, %s)"
-            cursor.execute(query, (modelo, mac))
+            query = "INSERT INTO cameras (modelo, Cloud, MAC) VALUES (%s, %s, %s)"
+            cursor.execute(query, (modelo, cloud, mac))
             conn.commit()
             cursor.close()
             conn.close()
@@ -336,6 +334,7 @@ def add_camera():
 @app.route('/edit_camera', methods=['POST'])
 def edit_camera():
     Modelo = request.form.get('Modelo')
+    Cloud = request.form.get('Cloud')
     MAC = request.form.get('MAC')
     camid = request.form.get('edit_id')
 
@@ -355,10 +354,10 @@ def edit_camera():
             cursor = conn.cursor()
             query = """
                 UPDATE cameras
-                SET Modelo = %s, MAC = %s 
+                SET Modelo = %s, Cloud = %s, MAC = %s 
                 WHERE cameraid = %s
             """
-            cursor.execute(query, (Modelo, MAC, camid))
+            cursor.execute(query, (Modelo, Cloud, MAC, camid))
             conn.commit()
             cursor.close()
             conn.close()

@@ -2,9 +2,10 @@ import sqlite3
 import mysql.connector
 
 class CameraDAO:
-    def __init__(self, modelo="", mac=""):
+    def __init__(self, modelo="", cloud="", mac=""):
         self.modelo = modelo
         self.mac = mac
+        self.cloud = cloud
         self.connection = self.conectar()
 
     def conectar(self):
@@ -63,6 +64,24 @@ class CameraDAO:
             print(f"Erro ao buscar o modelo da câmera: {e}")
             return ""
 
+    # Obtém o Cloud da câmera pelo ID
+    def get_cloud_dao(self, camera_id):
+        sql = "SELECT Cloud FROM cameras WHERE cameraid = ?"
+        mac = ""
+
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(sql, (camera_id,))
+            mac = cursor.fetchone()
+            if mac:
+                mac = mac[0]
+            else:
+                print(f"Nenhum Cloud encontrado com o id: {camera_id}")
+        except sqlite3.Error as e:
+            print(f"Erro ao buscar o Cliud da câmera: {e}")
+
+        return mac
+
     # Obtém o MAC da câmera pelo ID
     def get_mac_dao(self, camera_id):
         sql = "SELECT MAC FROM cameras WHERE cameraid = ?"
@@ -88,6 +107,17 @@ class CameraDAO:
         try:
             cursor = self.connection.cursor()
             cursor.execute(sql, (novo_modelo, camera_id))
+            self.connection.commit()
+        except sqlite3.Error as e:
+            print(f"Erro: {e}")
+
+    # Atualiza o cloud da câmera
+    def set_modelo(self, camera_id, novo_cloud):
+        sql = "UPDATE cameras SET Cloud = ? WHERE cameraid = ?"
+
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(sql, (novo_cloud, camera_id))
             self.connection.commit()
         except sqlite3.Error as e:
             print(f"Erro: {e}")
@@ -124,12 +154,12 @@ class CameraDAO:
         return minha_lista
 
     # Adiciona uma nova câmera
-    def add_camera(self, modelo, mac):
-        sql = "INSERT INTO cameras (modelo, MAC) VALUES (?, ?)"
+    def add_camera(self, modelo, cloud, mac):
+        sql = "INSERT INTO cameras (modelo, Cloud, MAC) VALUES (?, ?, ?)"
 
         try:
             cursor = self.connection.cursor()
-            cursor.execute(sql, (modelo, mac))
+            cursor.execute(sql, (modelo, cloud, mac))
             self.connection.commit()
         except sqlite3.Error as e:
             print(f"Erro: {e}")
@@ -144,23 +174,3 @@ class CameraDAO:
             self.connection.commit()
         except sqlite3.Error as e:
             print(f"Erro: {e}")
-
-# Exemplo de uso
-def main():
-    try:
-        connection = sqlite3.connect("envio.db")  # Ajuste o caminho do banco de dados conforme necessário
-        camera_dao = CameraDAO(connection)
-        
-        # Exemplo: adicionar uma nova câmera
-        camera_dao.add_camera("Modelo X", "00:14:22:01:23:45")
-
-        # Exemplo: obter a lista de câmeras
-        cameras = camera_dao.get_cameras()
-        for camera in cameras:
-            print(f"Modelo: {camera.get_modelo()}, MAC: {camera.get_mac()}")
-
-    except sqlite3.Error as e:
-        print(f"Erro na conexão: {e}")
-
-if __name__ == "__main__":
-    main()
