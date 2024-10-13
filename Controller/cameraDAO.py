@@ -1,6 +1,7 @@
 import sqlite3
 import mysql.connector
 
+
 class CameraDAO:
     def __init__(self, modelo="", cloud="", mac=""):
         self.modelo = modelo
@@ -144,10 +145,10 @@ class CameraDAO:
 
             rows = cursor.fetchall()
             for row in rows:
-                nome = row[1]  # Considerando que o modelo está na segunda coluna
-                mac = row[2]   # Considerando que o MAC está na terceira coluna
-                camera = Camera(nome, mac)  # Assumindo que a classe Camera já existe
-                minha_lista.append(camera)
+                nome = row[1]  
+                Model = row[2]
+                MAC = row[3]   
+                minha_lista.append(nome, Model, MAC)
         except sqlite3.Error as e:
             print(f"Erro: {e}")
 
