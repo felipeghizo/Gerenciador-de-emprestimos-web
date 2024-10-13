@@ -3,6 +3,9 @@ import mysql.connector
 from modelo.Cliente import Cliente 
 from modelo.Camera import Camera 
 
+# Muda o diretório de templates para 'view'
+app = Flask(__name__, template_folder='View')
+
 cliente = Cliente()
 camera = Camera()
 
@@ -19,14 +22,14 @@ def index():
             return redirect(url_for('envios'))
         else:
             show_error = True
-            return render_template('index.html', show_error=show_error)
-    return render_template('index.html', show_error=show_error)
+            return render_template('cameras.html', show_error=show_error)
+    return render_template('cameras.html', show_error=show_error)
 
 @app.route('/envios', methods=['GET', 'POST'])
 def envios():
     banco = "envio"
-    ip = "10.100.68.253"
-    senha = "Camerasip135."
+    ip = "192.168.1.114"
+    senha = "admin123"
     results = None
     if connect_to_db(banco, ip, senha):
         results = fetch_envios_data(banco, ip, senha)
@@ -37,8 +40,8 @@ def envios():
 @app.route('/cameras')
 def cameras():
     banco = "envio"
-    ip = "10.100.68.253"
-    senha = "Camerasip135."
+    ip = "192.168.1.114"
+    senha = "admin123"
     results = None
     if connect_to_db(banco, ip, senha):
         results = fetch_cameras_data(banco, ip, senha)
@@ -49,8 +52,8 @@ def cameras():
 @app.route('/clientes')
 def clientes():
     banco = "envio"
-    ip = "10.100.68.253"
-    senha = "Camerasip135."
+    ip = "192.168.1.114"
+    senha = "admin123"
     results = None
     if connect_to_db(banco, ip, senha):
         results = fetch_clientes_data(banco, ip, senha)
@@ -69,7 +72,7 @@ def connect_to_db(banco, ip, senha):
         'host': ip,
         'database': banco
     }
-    if banco == "envio" and ip == "10.100.68.253" and senha == "Camerasip135.":
+    if banco == "envio" and ip == "192.168.1.114" and senha == "admin123":
         try: 
             conn = mysql.connector.connect(**db_config)
             conn.close()
@@ -139,7 +142,7 @@ def fetch_cameras_data(banco, ip, senha):
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT cameraid, modelo, MAC, Cloud FROM cameras"
+        query = "SELECT cameraid, modelo, MAC FROM cameras"
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
@@ -160,8 +163,8 @@ def add_cliente():
     email = request.form.get('add_email')
     
     banco = "envio"
-    ip = "10.100.68.253"
-    senha = "Camerasip135."
+    ip = "192.168.1.114"
+    senha = "admin123"
 
     if connect_to_db(banco, ip, senha):
         db_config = {
@@ -195,8 +198,8 @@ def edit_cliente():
     email = request.form.get('edit_email')
 
     banco = "envio"
-    ip = "10.100.68.253"
-    senha = "Camerasip135."
+    ip = "192.168.1.114"
+    senha = "admin123"
 
     if connect_to_db(banco, ip, senha):
         db_config = {
@@ -229,8 +232,8 @@ def delete_cliente():
     cliente_id = request.form.get('id')
 
     banco = "envio"
-    ip = "10.100.68.253"
-    senha = "Camerasip135."
+    ip = "192.168.1.114"
+    senha = "admin123"
 
     if connect_to_db(banco, ip, senha):
         db_config = {
@@ -263,8 +266,8 @@ def delete_cliente():
 def cliente_tem_envios(numero_cliente):
     db_config = {
         'user': 'root',
-        'password': 'Camerasip135.',
-        'host': '10.100.68.253',
+        'password': 'admin123',
+        'host': '192.168.1.114',
         'database': 'envio'
     }
     try:
@@ -307,8 +310,8 @@ def add_camera():
     cam_id = request.form.get('cameraid')
 
     banco = "envio"
-    ip = "10.100.68.253"
-    senha = "Camerasip135."
+    ip = "192.168.1.114"
+    senha = "admin123"
 
     if connect_to_db(banco, ip, senha):
         db_config = {
@@ -320,8 +323,8 @@ def add_camera():
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
-            query = "INSERT INTO cameras (modelo, Cloud, MAC) VALUES (%s, %s, %s)"
-            cursor.execute(query, (modelo, cloud, mac))
+            query = "INSERT INTO cameras (modelo, MAC) VALUES (%s, %s)"
+            cursor.execute(query, (modelo, mac))
             conn.commit()
             cursor.close()
             conn.close()
@@ -335,13 +338,12 @@ def add_camera():
 @app.route('/edit_camera', methods=['POST'])
 def edit_camera():
     Modelo = request.form.get('Modelo')
-    Cloud = request.form.get('Cloud')
     MAC = request.form.get('MAC')
     camid = request.form.get('edit_id')
 
     banco = "envio"
-    ip = "10.100.68.253"
-    senha = "Camerasip135."
+    ip = "192.168.1.114"
+    senha = "admin123"
 
     if connect_to_db(banco, ip, senha):
         db_config = {
@@ -355,10 +357,10 @@ def edit_camera():
             cursor = conn.cursor()
             query = """
                 UPDATE cameras
-                SET Modelo = %s, Cloud = %s, MAC = %s 
+                SET Modelo = %s, MAC = %s 
                 WHERE cameraid = %s
             """
-            cursor.execute(query, (Modelo, Cloud, MAC, camid))
+            cursor.execute(query, (Modelo, MAC, camid))
             conn.commit()
             cursor.close()
             conn.close()
@@ -374,8 +376,8 @@ def delete_camera():
     camera_id = request.form.get('id')
 
     banco = "envio"
-    ip = "10.100.68.253"
-    senha = "Camerasip135."
+    ip = "192.168.1.114"
+    senha = "admin123"
 
     if connect_to_db(banco, ip, senha):
         db_config = {
@@ -408,8 +410,8 @@ def delete_camera():
 def cliente_tem_envios(numero_cliente):
     db_config = {
         'user': 'root',
-        'password': 'Camerasip135.',
-        'host': '10.100.68.253',
+        'password': 'admin123',
+        'host': '192.168.1.114',
         'database': 'envio'
     }
     try:
@@ -446,8 +448,8 @@ def cliente_tem_envios(numero_cliente):
 def camera_tem_envios(cameraid):
     db_config = {
         'user': 'root',
-        'password': 'Camerasip135.',
-        'host': '10.100.68.253',
+        'password': 'admin123',
+        'host': '192.168.1.114',
         'database': 'envio'
     }
     try:
