@@ -161,6 +161,12 @@ th {
 .additional-info{
     background-color: #fefefe;
 }
+tr:nth-child(odd) {
+    background-color: #e2e2e2;
+}
+tr:nth-child(even) {
+    background-color: #7a7a7a;
+}
 #hidden-td{display: none;}
 
 

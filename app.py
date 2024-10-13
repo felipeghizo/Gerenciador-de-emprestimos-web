@@ -30,8 +30,16 @@ def envios():
     senha = "admin123"
     results = None
     if connect_to_db(banco, ip, senha):
-        results = fetch_envios_data(banco, ip, senha)
-        return render_template('Envios.html', envios=results)
+        envios_data = fetch_envios_data(banco, ip, senha)
+        cameras_data = fetch_cameras_data(banco, ip, senha)
+        clientes_data = fetch_clientes_data(banco, ip, senha)
+            
+        results = {
+            'envios': envios_data,
+            'cameras': cameras_data,
+            'clientes': clientes_data
+        }
+        return render_template('Envios.html', **results)
     else:
         return "Erro na conexão com o banco de dados"
 
@@ -103,7 +111,7 @@ def fetch_envios_data(banco, ip, senha):
                 obj['clienteid'] = cliente.get_nome_id(obj['clienteid'])
             if 'cameraid' in obj:
                 obj['cameraid'] = camera.get_modelo_id(obj['cameraid'])
-
+        print("ok")
         return results
     except mysql.connector.Error as err:
         print(f"Erro: {err}")

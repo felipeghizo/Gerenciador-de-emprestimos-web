@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="Style/style_clientes.css"/>
+    <link rel="stylesheet" type="text/css" href="Style/style_envios.css"/>
     <title>Envios</title>
 </head>
 <body>
@@ -47,28 +47,34 @@
                     <button id="searchBtn" type="button">Procurar</button>
                     <button id="clearBtn" type="button">Limpar</button>
                 </div>                
-                <h3>Clientes</h3>
+                <h3>Envios</h3>
             </div>
             <div class="table-container">
                 <table id="clientsTable">
                     <thead>
                         <tr>
-                            <th>Nome</th>
-                            <th>Número Intelbras</th>
+                            <th>Cliente</th>
+                            <th>Câmera</th>
+                            <th>Status do teste</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% if clientes %}
-                            {% for cliente_item in clientes %}
-                                <tr class="clients-table-row" data-id="{{ cliente_item.clienteid }}">
-                                    <td id="hidden-td">{{ cliente_item.clienteid }}</td>
-                                    <td>{{ cliente_item.nome }}</td>
-                                    <td>{{ cliente_item.numero_cliente }}</td>
+                        {% if envios %}
+                            {% for envio_item in envios %}
+                                <tr class="envios-table-row" data-id="{{ envio_item.envioid }}">
+                                    <td id="hidden-td">{{ envio_item.envioid }}</td>
+                                    <td>{{ envio_item.clienteid }}</td>
+                                    <td>{{ envio_item.cameraid }}</td>
+                                    <td>{{ envio_item.status }}</td>
                                 </tr>
                                 <tr class="additional-info" data-id="{{ cliente_item.numero_cliente }}">
                                     <td colspan="4">
-                                        <p>Endereço: {{ cliente_item.endereco }}</p>
-                                        <p>Email: {{ cliente_item.email }}</p>
+                                        <p>Acesso: {{ envio_item.endereco }}</p>
+                                        <p>Data de envio: {{ envio_item.email }}</p>
+                                        <p>Data de entrega: {{ envio_item.email }}</p>
+                                        <p>Data de instalação: {{ envio_item.email }}</p>
+                                        <p>Nota fiscal: {{ envio_item.email }}</p>
+                                        <p>Sequência: {{ envio_item.email }}</p>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -82,23 +88,84 @@
     </section>
 
     <!-- Modal de Adição -->
-    <div id="addClientModal" class="modal">
+    <div id="addEnvioModal" class="modal">
         <div class="modal-content">
-            <span class="close" data-modal="addClientModal">&times;</span>
-            <h2>Adicionar cliente</h2>
-            <form id="addClientForm" method="POST" action="{{ url_for('add_cliente') }}">
-                <label for="add_nome">Nome:</label>
-                <input type="text" id="add_nome" name="add_nome" required><br><br>
-                <label for="add_numero_cliente">Número cliente:</label>
-                <input type="text" id="add_numero_cliente" name="add_numero_cliente" required><br><br>
-                <label for="add_telefone">telefone:</label>
-                <input type="text" id="add_telefone" name="add_telefone" required><br><br>
-                <label for="add_endereco">Endereço:</label>
-                <input type="text" id="add_endereco" name="add_endereco" required><br><br>
-                <label for="add_email">E-mail:</label>
-                <input type="text" id="add_email" name="add_email" required><br><br>
-                <input type="submit" value="Adicionar">
-            </form>
+            <span class="close" data-modal="addEnvioModal">&times;</span>
+            <div id="info">
+                <div class="table-container">
+                    <div id="table-container-clients">
+                        <div id="table-tittle">
+                            <div id="look-for-info">
+                                <input type="text" id="searchInput" placeholder="Dados">
+                                <button id="searchBtn" type="button">Procurar</button>
+                                <button id="clearBtn" type="button">Limpar</button>
+                            </div>                
+                            <h3>Clientes</h3>
+                        </div>
+                        <table id="clientsTable">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Número Intelbras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if clientes %}
+                                    {% for cliente_item in clientes %}
+                                        <tr class="clients-table-row" data-id="{{ cliente_item.clienteid }}">
+                                            <td id="hidden-td">{{ cliente_item.clienteid }}</td>
+                                            <td>{{ cliente_item.nome }}</td>
+                                            <td>{{ cliente_item.numero_cliente }}</td>
+                                        </tr>
+                                        <tr class="additional-info" data-id="{{ cliente_item.numero_cliente }}">
+                                            <td colspan="4">
+                                                <p>Endereço: {{ cliente_item.endereco }}</p>
+                                                <p>Email: {{ cliente_item.email }}</p>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr><td colspan="4">Nenhum registro encontrado</td></tr>
+                                {% endif %}
+                            </tbody>              
+                        </table>
+                    </div>
+                    <div id="table-container-btn-add">
+                        <button id="addEnvioConfirmBtn">Adicionar <br> envio</button>
+                    </div>
+                    <div id="table-container-cams">
+                        <div id="table-tittle">
+                            <div id="look-for-info">
+                                <input type="text" id="searchInput" placeholder="Dados">
+                                <button id="searchBtn" type="button">Procurar</button>
+                                <button id="clearBtn" type="button">Limpar</button>
+                            </div>                
+                            <h3>Câmeras</h3>
+                        </div>
+                        <table id="camsTable">
+                            <thead>
+                                <tr>
+                                    <th>Modelo</th>
+                                    <th>Cloud</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if cameras %}
+                                    {% for camera_item in cameras %}
+                                        <tr class="cams-table-row" data-id="{{ camera_item.cameraid }}">
+                                            <td id="hidden-td">{{ camera_item.cameraid }}</td>
+                                            <td>{{ camera_item.modelo }}</td>
+                                            <td>{{ camera_item.Cloud }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr><td colspan="3">Nenhum registro encontrado</td></tr>
+                                {% endif %}
+                            </tbody>              
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -176,7 +243,7 @@
         });
 
         btnAdd.onclick = function() {
-            openModal('addClientModal');
+            openModal('addEnvioModal');
         }
 
         var selectedRow = null;

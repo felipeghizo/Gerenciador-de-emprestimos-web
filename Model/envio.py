@@ -1,5 +1,5 @@
 # Certifique-se de que o caminho para EnvioDAO está correto
-from EnvioDAO import EnvioDAO
+from Controller.envioDAO import EnvioDAO
 
 class Envio:
 
