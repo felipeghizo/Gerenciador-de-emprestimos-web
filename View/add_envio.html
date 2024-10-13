@@ -77,6 +77,31 @@
                         {% endif %}
                     </tbody>              
                 </table>
+                <div class="table-container">
+                    <table id="camsTable">
+                        <thead>
+                            <tr>
+                                <th>Modelo</th>
+                                <th>Cloud</th>
+                                <th>Mac</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if cameras %}
+                                {% for camera_item in cameras %}
+                                    <tr class="cams-table-row" data-id="{{ camera_item.cameraid }}">
+                                        <td id="hidden-td">{{ camera_item.cameraid }}</td>
+                                        <td>{{ camera_item.modelo }}</td>
+                                        <td>{{ camera_item.Cloud }}</td>
+                                        <td>{{ camera_item.MAC }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr><td colspan="3">Nenhum registro encontrado</td></tr>
+                            {% endif %}
+                        </tbody>              
+                    </table>
+                </div>
             </div>
         </div>
     </section>
