@@ -1,15 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
-from modelo.Cliente import Cliente 
-from modelo.Camera import Camera 
+from Model.cliente import Cliente 
+from Model.camera import Camera 
 
 # Muda o diretório de templates para 'view'
 app = Flask(__name__, template_folder='View')
 
 cliente = Cliente()
 camera = Camera()
-
-app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

@@ -1,6 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
-from dao.CameraDAO import CameraDAO
+from Controller.cameraDAO import CameraDAO
 
 class Camera:
     def __init__(self, modelo="", mac=""):

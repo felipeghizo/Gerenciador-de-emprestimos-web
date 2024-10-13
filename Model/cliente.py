@@ -1,6 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
-from dao.ClienteDAO import ClienteDAO
+from Controller.clienteDAO import ClienteDAO
 
 
 class Cliente:
