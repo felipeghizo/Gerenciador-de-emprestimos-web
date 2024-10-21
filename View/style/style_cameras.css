@@ -142,8 +142,8 @@ section#Main div#info div#table-tittle div#look-for-info input{
 }
 
 div.table-container{
-    max-height: 300px; /* Ajuste a altura conforme necessário */
-    overflow-y: auto; /* Adiciona uma barra de rolagem vertical */
+    max-height: 80%;
+    overflow-y: auto; 
 }
 table {
     width: 100%;

@@ -41,7 +41,7 @@ def envios():
             'cameras': cameras_data,
             'clientes': clientes_data
         }
-        return render_template('Envios.html', **results)
+        return render_template('envios.html', **results)
     else:
         return "Erro na conexão com o banco de dados"
 
