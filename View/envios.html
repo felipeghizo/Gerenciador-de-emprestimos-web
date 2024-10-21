@@ -67,7 +67,7 @@
                                     <td>{{ envio_item.cameraid }}</td>
                                     <td>{{ envio_item.status }}</td>
                                 </tr>
-                                <tr class="additional-info" data-id="{{ envio_item.numero_cliente }}">
+                                <tr class="additional-info" data-id="{{ cliente_item.numero_cliente }}">
                                     <td colspan="4">
                                         <p>Acesso: {{ envio_item.endereco }}</p>
                                         <p>Data de envio: {{ envio_item.email }}</p>
@@ -166,6 +166,28 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editClientModal" class="modal">
+        <div class="modal-content">
+            <span class="close" data-modal="editClientModal">&times;</span>
+            <h2>Editar cliente</h2>
+            <form id="editClientForm" method="POST" action="{{ url_for('edit_cliente') }}">
+                <input type="hidden" id="edit_clienteid" name="edit_id">
+                <label for="edit_nome">Nome:</label>
+                <input type="text" id="edit_nome" name="Nome" required><br><br>
+                <label for="edit_numero_intelbras">Número Intelbras:</label>
+                <input type="text" id="edit_numero_intelbras" name="Numero_intelbras" required><br><br>
+                <label for="edit_telefone">Telefone:</label>
+                <input type="text" id="edit_telefone" name="Telefone" required><br><br>
+                <label for="edit_endereco">Endereço:</label>
+                <input type="text" id="edit_endereco" name="edit_endereco" required><br><br>
+                <label for="edit_email">E-mail:</label>
+                <input type="text" id="edit_email" name="edit_email" required><br><br>
+                <input type="submit" value="Atualizar">
+            </form>
         </div>
     </div>
 
