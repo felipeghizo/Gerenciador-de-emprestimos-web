@@ -9,15 +9,20 @@ app = Flask(__name__, template_folder='View', static_folder='View/Style')
 cliente = Cliente()
 camera = Camera()
 
+def get_db_config():
+    return {
+        'user': "root",
+        'password': "Camerasip135.",
+        'host': "10.100.68.253",
+        'database': "envio"
+    }
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     show_error = False
-    if request.method == 'POST':
-        banco = request.form.get('Banco_connect')
-        ip = request.form.get('IP_connect')
-        senha = request.form.get('Senha_connect')
-        if connect_to_db(banco, ip, senha):  
-            return redirect(url_for('envios'))
+    if request.method == 'GET':
+        if connect_to_db():  
+            return redirect(url_for('cameras'))
         else:
             show_error = True
             return render_template('cameras.html', show_error=show_error)
@@ -25,14 +30,11 @@ def index():
 
 @app.route('/envios', methods=['GET', 'POST'])
 def envios():
-    banco = "envio"
-    ip = "192.168.1.114"
-    senha = "admin123"
     results = None
-    if connect_to_db(banco, ip, senha):
-        envios_data = fetch_envios_data(banco, ip, senha)
-        cameras_data = fetch_cameras_data(banco, ip, senha)
-        clientes_data = fetch_clientes_data(banco, ip, senha)
+    if connect_to_db():
+        envios_data = fetch_envios_data()
+        cameras_data = fetch_cameras_data()
+        clientes_data = fetch_clientes_data()
             
         results = {
             'envios': envios_data,
@@ -45,24 +47,18 @@ def envios():
 
 @app.route('/cameras')
 def cameras():
-    banco = "envio"
-    ip = "192.168.1.114"
-    senha = "admin123"
     results = None
-    if connect_to_db(banco, ip, senha):
-        results = fetch_cameras_data(banco, ip, senha)
+    if connect_to_db():
+        results = fetch_cameras_data()
         return render_template('Cameras.html', cameras=results)
     else:
         return "Erro na conexão com o banco de dados"
 
 @app.route('/clientes')
 def clientes():
-    banco = "envio"
-    ip = "192.168.1.114"
-    senha = "admin123"
     results = None
-    if connect_to_db(banco, ip, senha):
-        results = fetch_clientes_data(banco, ip, senha)
+    if connect_to_db():
+        results = fetch_clientes_data()
         return render_template('Clientes.html', clientes=results)
     else:
         return "Erro na conexão com o banco de dados"
@@ -71,31 +67,18 @@ def clientes():
 def historico():
     return render_template('Historico.html')
 
-def connect_to_db(banco, ip, senha):
-    db_config = {
-        'user': 'root',
-        'password': senha,
-        'host': ip,
-        'database': banco
-    }
-    if banco == "envio" and ip == "192.168.1.114" and senha == "admin123":
-        try: 
-            conn = mysql.connector.connect(**db_config)
-            conn.close()
-            return True
-        except mysql.connector.Error as err:
-            print(err)
-            return False
-    else:
+def connect_to_db():
+    db_config = get_db_config()
+    try: 
+        conn = mysql.connector.connect(**db_config)
+        conn.close()
+        return True
+    except mysql.connector.Error as err:
+        print(err)
         return False
 
-def fetch_envios_data(banco, ip, senha):
-    db_config = {
-        'user': 'root',
-        'password': senha,
-        'host': ip,
-        'database': banco
-    }
+def fetch_envios_data():
+    db_config = get_db_config()
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
@@ -111,19 +94,13 @@ def fetch_envios_data(banco, ip, senha):
                 obj['clienteid'] = cliente.get_nome_id(obj['clienteid'])
             if 'cameraid' in obj:
                 obj['cameraid'] = camera.get_modelo_id(obj['cameraid'])
-        print("ok")
         return results
     except mysql.connector.Error as err:
         print(f"Erro: {err}")
         return []
-    
-def fetch_clientes_data(banco, ip, senha):
-    db_config = {
-        'user': 'root',
-        'password': senha,
-        'host': ip,
-        'database': banco
-    }
+
+def fetch_clientes_data():
+    db_config = get_db_config()
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
@@ -138,13 +115,8 @@ def fetch_clientes_data(banco, ip, senha):
         print(f"Erro: {err}")
         return []
 
-def fetch_cameras_data(banco, ip, senha):
-    db_config = {
-        'user': 'root',
-        'password': senha,
-        'host': ip,
-        'database': banco
-    }
+def fetch_cameras_data():
+    db_config = get_db_config()
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
@@ -167,17 +139,8 @@ def add_cliente():
     endereco = request.form.get('add_endereco')
     email = request.form.get('add_email')
     
-    banco = "envio"
-    ip = "192.168.1.114"
-    senha = "admin123"
-
-    if connect_to_db(banco, ip, senha):
-        db_config = {
-            'user': 'root',
-            'password': senha,
-            'host': ip,
-            'database': banco
-        }
+    if connect_to_db():
+        db_config = get_db_config()
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
@@ -192,27 +155,18 @@ def add_cliente():
             return "Erro ao adicionar cliente", 500
     else:
         return "Erro na conexão com o banco de dados", 500
-    
+
 @app.route('/edit_cliente', methods=['POST'])
 def edit_cliente():
     nome = request.form.get('Nome')
     telefone = request.form.get('Numero_intelbras')
     numero_cliente = request.form.get('Telefone')
     clienteid = request.form.get('edit_id')
-    endereco =  request.form.get('edit_endereco')
+    endereco = request.form.get('edit_endereco')
     email = request.form.get('edit_email')
 
-    banco = "envio"
-    ip = "192.168.1.114"
-    senha = "admin123"
-
-    if connect_to_db(banco, ip, senha):
-        db_config = {
-            'user': 'root',
-            'password': senha,
-            'host': ip,
-            'database': banco
-        }
+    if connect_to_db():
+        db_config = get_db_config()
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
@@ -236,17 +190,8 @@ def edit_cliente():
 def delete_cliente():
     cliente_id = request.form.get('id')
 
-    banco = "envio"
-    ip = "192.168.1.114"
-    senha = "admin123"
-
-    if connect_to_db(banco, ip, senha):
-        db_config = {
-            'user': 'root',
-            'password': senha,
-            'host': ip,
-            'database': banco
-        }
+    if connect_to_db():
+        db_config = get_db_config()
         try:
             if cliente_tem_envios(cliente_id):
                 return "Não é possível excluir o cliente porque ele está associado a envios ativos.", 400
@@ -269,12 +214,7 @@ def delete_cliente():
         return "Erro na conexão com o banco de dados", 500
 
 def cliente_tem_envios(numero_cliente):
-    db_config = {
-        'user': 'root',
-        'password': 'admin123',
-        'host': '192.168.1.114',
-        'database': 'envio'
-    }
+    db_config = get_db_config()
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
@@ -287,7 +227,6 @@ def cliente_tem_envios(numero_cliente):
         if result:
             clienteid = result[0]
         else:
-            # Se o cliente não for encontrado, retorna False
             cursor.close()
             conn.close()
             return False
@@ -313,17 +252,8 @@ def add_camera():
     cloud = request.form.get('Cloud')
     mac = request.form.get('MAC')
 
-    banco = "envio"
-    ip = "192.168.1.114"
-    senha = "admin123"
-
-    if connect_to_db(banco, ip, senha):
-        db_config = {
-            'user': 'root',
-            'password': senha,
-            'host': ip,
-            'database': banco
-        }
+    if connect_to_db():
+        db_config = get_db_config()
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
@@ -346,17 +276,8 @@ def edit_camera():
     MAC = request.form.get('MAC')
     camid = request.form.get('edit_id')
 
-    banco = "envio"
-    ip = "192.168.1.114"
-    senha = "admin123"
-
-    if connect_to_db(banco, ip, senha):
-        db_config = {
-            'user': 'root',
-            'password': senha,
-            'host': ip,
-            'database': banco
-        }
+    if connect_to_db():
+        db_config = get_db_config()
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
@@ -380,17 +301,8 @@ def edit_camera():
 def delete_camera():
     camera_id = request.form.get('id')
 
-    banco = "envio"
-    ip = "192.168.1.114"
-    senha = "admin123"
-
-    if connect_to_db(banco, ip, senha):
-        db_config = {
-            'user': 'root',
-            'password': senha,
-            'host': ip,
-            'database': banco
-        }
+    if connect_to_db():
+        db_config = get_db_config()
         try:
             if camera_tem_envios(camera_id):
                 return "Não é possível excluir a câmera porque ela está associada a envios ativos.", 400
@@ -412,56 +324,13 @@ def delete_camera():
     else:
         return "Erro na conexão com o banco de dados", 500
 
-def cliente_tem_envios(numero_cliente):
-    db_config = {
-        'user': 'root',
-        'password': 'admin123',
-        'host': '192.168.1.114',
-        'database': 'envio'
-    }
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-
-        # Verifica se o cliente existe e obtém o clienteid
-        query1 = "SELECT clienteid FROM clientes WHERE numero_cliente = %s"
-        cursor.execute(query1, (numero_cliente,))
-        result = cursor.fetchone()
-        
-        if result:
-            clienteid = result[0]
-        else:
-            # Se o cliente não for encontrado, retorna False
-            cursor.close()
-            conn.close()
-            return False
-        
-        # Verifica se há envios associados ao cliente
-        query2 = "SELECT COUNT(*) FROM envios WHERE clienteid = %s"
-        cursor.execute(query2, (clienteid,))
-        count = cursor.fetchone()[0]
-
-        cursor.close()
-        conn.close()
-
-        return count > 0
-
-    except mysql.connector.Error as err:
-        print(f"Erro: {err}")
-        return False
-
 def camera_tem_envios(cameraid):
-    db_config = {
-        'user': 'root',
-        'password': 'admin123',
-        'host': '192.168.1.114',
-        'database': 'envio'
-    }
+    db_config = get_db_config()
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         
-        # Verifica se há envios associados ao cliente
+        # Verifica se há envios associados à câmera
         query2 = "SELECT COUNT(*) FROM envios WHERE cameraid = %s"
         cursor.execute(query2, (cameraid,))
         count = cursor.fetchone()[0]
