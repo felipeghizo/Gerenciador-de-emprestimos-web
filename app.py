@@ -12,8 +12,8 @@ camera = Camera()
 def get_db_config():
     return {
         'user': "root",
-        'password': "Camerasip135.",
-        'host': "10.100.68.253",
+        'password': "",
+        'host': "192.168.1.112",
         'database': "envio"
     }
 
