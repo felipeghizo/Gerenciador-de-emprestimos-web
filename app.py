@@ -82,7 +82,7 @@ def fetch_envios_data():
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT clienteid, cameraid, acesso FROM envios"
+        query = "SELECT clienteid, cameraid, status FROM envios"
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
@@ -349,17 +349,17 @@ def camera_tem_envios(cameraid):
 def add_InfoEnvio():
     cliente = request.form.get('addInfo_clienteid')
     camera = request.form.get('addInfo_camid')
-    print(cliente, camera)
-    numero_pedido = request.form.get('add_telefone')
-    sequencia = request.form.get('add_endereco')
+    numero_pedido = request.form.get('numero_pedido')
+    sequencia = request.form.get('sequencia')
+    status = request.form.get('addInfo_status')
     
     if connect_to_db():
         db_config = get_db_config()
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
-            query = "INSERT INTO envios (clienteid, cameraid, numero_pedido, sequencia) VALUES (%s, %s, %s, %s)"
-            cursor.execute(query, (cliente, camera, numero_pedido, sequencia))
+            query = "INSERT INTO envios (clienteid, cameraid, numero_pedido, sequencia, status) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(query, (cliente, camera, numero_pedido, sequencia, status))
             conn.commit()
             cursor.close()
             conn.close()

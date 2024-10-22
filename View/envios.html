@@ -68,16 +68,6 @@
                                     <td>{{ envio_item.cameraid }}</td>
                                     <td>{{ envio_item.status }}</td>
                                 </tr>
-                                <tr class="additional-info" data-id="{{ envio_item.numero_cliente }}">
-                                    <td colspan="4">
-                                        <p>Acesso: {{ envio_item.endereco }}</p>
-                                        <p>Data de envio: {{ envio_item.email }}</p>
-                                        <p>Data de entrega: {{ envio_item.email }}</p>
-                                        <p>Data de instalação: {{ envio_item.email }}</p>
-                                        <p>Nota fiscal: {{ envio_item.email }}</p>
-                                        <p>Sequência: {{ envio_item.email }}</p>
-                                    </td>
-                                </tr>
                             {% endfor %}
                         {% else %}
                             <tr><td colspan="4">Nenhum registro encontrado</td></tr>
@@ -170,7 +160,7 @@
         </div>
     </div>
 
-    <!-- Modal de Edição -->
+    <!-- Modal de Adição -->
     <div id="addInfoEnvio" class="modal">
         <div class="modal-content">
             <span class="close" data-modal="addInfoEnvio">&times;</span>
@@ -178,6 +168,7 @@
             <form id="addInfoEnvioForm" method="POST" action="{{ url_for('add_InfoEnvio') }}">
                 <input type="hidden" id="addInfo_clienteid" name="addInfo_clienteid">
                 <input type="hidden" id="addInfo_camid" name="addInfo_camid">
+                <input type="hidden" id="addInfo_status" name="addInfo_status" value="ATIVO">
                 <label for="numero_pedido">Número do pedido:</label>
                 <input type="text" id="numero_pedido" name="numero_pedido" ><br><br>
                 <label for="sequencia">Sequência:</label>
@@ -242,6 +233,25 @@
         btnAdd.onclick = function() {
             openModal('addEnvioModal');
         }
+
+        var selectedRow = null;
+        document.getElementById('envioTable').addEventListener('click', function(e) {
+            var target = e.target;
+            while (target && target.nodeName !== 'TR') {
+                target = target.parentNode;
+            }
+            if (target && target.nodeName === 'TR') {
+                // Remove a seleção da linha anterior
+                if (selectedRow) {
+                    selectedRow.classList.remove('selected');
+                    selectedRow.style.backgroundColor = ''; // Reseta a cor de fundo
+                }
+                // Seleciona a nova linha
+                selectedRow = target;
+                selectedRow.classList.add('selected');
+                selectedRow.style.backgroundColor = '#5f5f5f'; // Define a cor de fundo
+            } 
+        });
 
         var selectedRowClient = null;
         document.getElementById('clientsTable').addEventListener('click', function(e) {
