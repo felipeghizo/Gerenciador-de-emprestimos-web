@@ -244,11 +244,11 @@ div.modal div.table-container div#table-container-cams{
 div.modal div.table-container div#table-container-btn-add{
     position: relative;
     float: left;
-    width: 10%;
+    width: 7%;
     margin-left: 2%;
 }
-div.modal div.table-container div#table-container-btn-add button{
-    width: 200px;
+div.modal div.table-container div#table-container-btn-add input{
+    width: 150px;
     height: 40px;
     font-size: medium;
     font-weight: bold;

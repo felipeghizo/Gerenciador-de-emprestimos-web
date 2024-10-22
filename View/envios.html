@@ -51,7 +51,7 @@
                 <h3>Envios</h3>
             </div>
             <div class="table-container">
-                <table id="clientsTable">
+                <table id="envioTable">
                     <thead>
                         <tr>
                             <th>Cliente</th>
@@ -68,7 +68,7 @@
                                     <td>{{ envio_item.cameraid }}</td>
                                     <td>{{ envio_item.status }}</td>
                                 </tr>
-                                <tr class="additional-info" data-id="{{ cliente_item.numero_cliente }}">
+                                <tr class="additional-info" data-id="{{ envio_item.numero_cliente }}">
                                     <td colspan="4">
                                         <p>Acesso: {{ envio_item.endereco }}</p>
                                         <p>Data de envio: {{ envio_item.email }}</p>
@@ -96,12 +96,12 @@
                 <div class="table-container">
                     <div id="table-container-clients">
                         <div id="table-tittle">
+                            <h3>Clientes</h3>
                             <div id="look-for-info">
                                 <input type="text" id="searchInput" placeholder="Dados">
                                 <button id="searchBtn" type="button">Procurar</button>
                                 <button id="clearBtn" type="button">Limpar</button>
                             </div>                
-                            <h3>Clientes</h3>
                         </div>
                         <table id="clientsTable">
                             <thead>
@@ -132,16 +132,16 @@
                         </table>
                     </div>
                     <div id="table-container-btn-add">
-                        <button id="addEnvioConfirmBtn">Adicionar <br> envio</button>
+                        <input type="button" id="addEnvioConfirmBtn" value="Confirmar">
                     </div>
                     <div id="table-container-cams">
                         <div id="table-tittle">
+                            <h3>Câmeras</h3>
                             <div id="look-for-info">
                                 <input type="text" id="searchInput" placeholder="Dados">
                                 <button id="searchBtn" type="button">Procurar</button>
                                 <button id="clearBtn" type="button">Limpar</button>
                             </div>                
-                            <h3>Câmeras</h3>
                         </div>
                         <table id="camsTable">
                             <thead>
@@ -171,22 +171,17 @@
     </div>
 
     <!-- Modal de Edição -->
-    <div id="editClientModal" class="modal">
+    <div id="addInfoEnvio" class="modal">
         <div class="modal-content">
-            <span class="close" data-modal="editClientModal">&times;</span>
-            <h2>Editar cliente</h2>
-            <form id="editClientForm" method="POST" action="{{ url_for('edit_cliente') }}">
-                <input type="hidden" id="edit_clienteid" name="edit_id">
-                <label for="edit_nome">Nome:</label>
-                <input type="text" id="edit_nome" name="Nome" required><br><br>
-                <label for="edit_numero_intelbras">Número Intelbras:</label>
-                <input type="text" id="edit_numero_intelbras" name="Numero_intelbras" required><br><br>
-                <label for="edit_telefone">Telefone:</label>
-                <input type="text" id="edit_telefone" name="Telefone" required><br><br>
-                <label for="edit_endereco">Endereço:</label>
-                <input type="text" id="edit_endereco" name="edit_endereco" required><br><br>
-                <label for="edit_email">E-mail:</label>
-                <input type="text" id="edit_email" name="edit_email" required><br><br>
+            <span class="close" data-modal="addInfoEnvio">&times;</span>
+            <h2>informações sobre o envio</h2>
+            <form id="addInfoEnvioForm" method="POST" action="{{ url_for('add_InfoEnvio') }}">
+                <input type="hidden" id="addInfo_clienteid" name="addInfo_clienteid">
+                <input type="hidden" id="addInfo_camid" name="addInfo_camid">
+                <label for="numero_pedido">Número do pedido:</label>
+                <input type="text" id="numero_pedido" name="numero_pedido" ><br><br>
+                <label for="sequencia">Sequência:</label>
+                <input type="text" id="sequencia" name="sequencia" ><br><br>
                 <input type="submit" value="Atualizar">
             </form>
         </div>
@@ -216,6 +211,7 @@
         var btnEdit = document.getElementById("editEnvioBtn");
         var btnDelete = document.getElementById("deleteEnvioBtn");
         var btnRelatorio = document.getElementById("viewRelatorioBtn");
+        var btnConfirmarAdicao = document.getElementById("addEnvioConfirmBtn");
 
         function openModal(modalId) {
             var modal = document.getElementById(modalId);
@@ -247,61 +243,51 @@
             openModal('addEnvioModal');
         }
 
-        var selectedRow = null;
-
-        document.getElementById('clientTable').addEventListener('click', function(e) {
+        var selectedRowClient = null;
+        document.getElementById('clientsTable').addEventListener('click', function(e) {
             var target = e.target;
             while (target && target.nodeName !== 'TR') {
                 target = target.parentNode;
             }
             if (target && target.nodeName === 'TR') {
-                if (selectedRow) {
-                    selectedRow.classList.remove('selected');
-                    colorTable();
+                // Remove a seleção da linha anterior
+                if (selectedRowClient) {
+                    selectedRowClient.classList.remove('selected');
+                    selectedRowClient.style.backgroundColor = ''; // Reseta a cor de fundo
                 }
-                selectedRow = target;
-                selectedRow.classList.add('selected');
-                selectedRow.style.backgroundColor = '#5f5f5f';
+                // Seleciona a nova linha
+                selectedRowClient = target;
+                selectedRowClient.classList.add('selected');
+                selectedRowClient.style.backgroundColor = '#5f5f5f'; // Define a cor de fundo
             } 
         });
 
-        btnEdit.onclick = function() {
-            if (selectedRow) {
-                var id = selectedRow.children[0].textContent;
-                var Nome = selectedRow.children[1].textContent;
-                var Numero_intelbras = selectedRow.children[2].textContent;
-                var Telefone = selectedRow.children[3].textContent;
-
-                // Supondo que selectedRow seja um elemento DOM válido
-                var dados = selectedRow.nextElementSibling.textContent.split('\n');
-                var Email;
-                var Endereco;
-                // Supondo que `dados` seja o array com as linhas
-                dados.forEach((linha) => {
-                    // Verifica se a linha contém o caractere "E"
-                    if (linha.includes('En')) {
-                        Endereco = linha.trimStart().split(" ");
-                        Endereco = Endereco.slice(1);
-                        Endereco = Endereco.map(item => item.replace(/,/g, ' '));
-                        Endereco = Endereco.join(' ');
-                    } else if (linha.includes('Em')) {
-                        Email = linha.trimStart().split(" ");
-                        Email = Email[1];
-                    }
-                });
-
-                document.getElementById('edit_clienteid').value = id;
-                document.getElementById('edit_nome').value = Nome;
-                document.getElementById('edit_numero_intelbras').value = Numero_intelbras;
-                document.getElementById('edit_telefone').value = Telefone;
-                document.getElementById('edit_endereco').value = Endereco;
-                document.getElementById('edit_email').value = Email;
-
-                openModal('editClientModal');
-            } else {
-                alert('Nenhum cliente selecionado.');
+        var selectedRowCam = null;
+        document.getElementById('camsTable').addEventListener('click', function(e) {
+            var target = e.target;
+            while (target && target.nodeName !== 'TR') {
+                target = target.parentNode;
             }
-        }
+            if (target && target.nodeName === 'TR') {
+                // Remove a seleção da linha anterior
+                if (selectedRowCam) {
+                    selectedRowCam.classList.remove('selected');
+                    selectedRowCam.style.backgroundColor = ''; // Reseta a cor de fundo
+                }
+                // Seleciona a nova linha
+                selectedRowCam = target;
+                selectedRowCam.classList.add('selected');
+                selectedRowCam.style.backgroundColor = '#5f5f5f'; // Define a cor de fundo
+            } 
+        });
+
+        btnConfirmarAdicao.onclick = function() {
+            if (selectedRowClient && selectedRowCam) {
+                document.getElementById('addInfo_clienteid').value = selectedRowClient.children[0].textContent;
+                document.getElementById('addInfo_camid').value = selectedRowCam.children[0].textContent;
+                openModal('addInfoEnvio');
+            }
+        };
 
         btnDelete.onclick = function() {
             if (selectedRow) {

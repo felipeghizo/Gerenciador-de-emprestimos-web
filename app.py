@@ -12,8 +12,8 @@ camera = Camera()
 def get_db_config():
     return {
         'user': "root",
-        'password': "",
-        'host': "192.168.1.112",
+        'password': "Camerasip135.",
+        'host': "10.100.68.253",
         'database': "envio"
     }
 
@@ -343,6 +343,32 @@ def camera_tem_envios(cameraid):
     except mysql.connector.Error as err:
         print(f"Erro: {err}")
         return False
+
+# CRUD Envios
+@app.route('/add_InfoEnvio', methods=['POST'])
+def add_InfoEnvio():
+    cliente = request.form.get('addInfo_clienteid')
+    camera = request.form.get('addInfo_camid')
+    print(cliente, camera)
+    numero_pedido = request.form.get('add_telefone')
+    sequencia = request.form.get('add_endereco')
+    
+    if connect_to_db():
+        db_config = get_db_config()
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            query = "INSERT INTO envios (clienteid, cameraid, numero_pedido, sequencia) VALUES (%s, %s, %s, %s)"
+            cursor.execute(query, (cliente, camera, numero_pedido, sequencia))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return redirect(url_for('envios'))
+        except mysql.connector.Error as err:
+            print(f"Erro: {err}")
+            return "Erro ao adicionar cliente", 500
+    else:
+        return "Erro na conexão com o banco de dados", 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
