@@ -33,13 +33,13 @@ def envios():
     results = None
     if connect_to_db():
         envios_data = fetch_envios_data()
-        cameras_data = fetch_cameras_data()
-        clientes_data = fetch_clientes_data()
+        cameras_envioativo_data = fetch_cameras_enviosAtivos_data()
+        clientes_envioativo_data = fetch_clientes_enviosAtivos_data()
             
         results = {
             'envios': envios_data,
-            'cameras': cameras_data,
-            'clientes': clientes_data
+            'cameras': cameras_envioativo_data,
+            'clientes': clientes_envioativo_data
         }
         return render_template('envios.html', **results)
     else:
@@ -115,12 +115,53 @@ def fetch_clientes_data():
         print(f"Erro: {err}")
         return []
 
+def fetch_clientes_enviosAtivos_data():
+    db_config = get_db_config()
+    try: 
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        query = """
+            SELECT c.clienteid, c.nome, c.telefone, c.numero_cliente, c.endereco, c.email 
+            FROM clientes c
+            LEFT JOIN envios e ON c.clienteid = e.clienteid
+            WHERE e.clienteid IS NULL
+        """
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        return results
+    except mysql.connector.Error as err:
+        print(f"Erro: {err}")
+        return []
+
 def fetch_cameras_data():
     db_config = get_db_config()
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
         query = "SELECT cameraid, modelo, Cloud, MAC FROM cameras"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return results
+    except mysql.connector.Error as err:
+        print(f"Erro: {err}")
+        return []
+        
+def fetch_cameras_enviosAtivos_data():
+    db_config = get_db_config()
+    try: 
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        query = """
+            SELECT cam.cameraid, cam.modelo, cam.Cloud 
+            FROM cameras cam
+            LEFT JOIN envios e ON cam.cameraid = e.cameraid
+            WHERE e.cameraid IS NULL
+        """
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()

@@ -45,8 +45,8 @@
             <div id="table-tittle">
                 <div id="look-for-info">
                     <input type="text" id="searchInput" placeholder="Dados">
-                    <button id="searchBtn" type="button">Procurar</button>
-                    <button id="clearBtn" type="button">Limpar</button>
+                    <button id="searchBtnEnvios" type="button">Procurar</button>
+                    <button id="clearBtnEnvios" type="button">Limpar</button>
                 </div>                
                 <h3>Envios</h3>
             </div>
@@ -89,8 +89,8 @@
                             <h3>Clientes</h3>
                             <div id="look-for-info">
                                 <input type="text" id="searchInput" placeholder="Dados">
-                                <button id="searchBtn" type="button">Procurar</button>
-                                <button id="clearBtn" type="button">Limpar</button>
+                                <button id="searchBtnClientes" type="button">Procurar</button>
+                                <button id="clearBtnClientes" type="button">Limpar</button>
                             </div>                
                         </div>
                         <table id="clientsTable">
@@ -108,12 +108,6 @@
                                             <td>{{ cliente_item.nome }}</td>
                                             <td>{{ cliente_item.numero_cliente }}</td>
                                         </tr>
-                                        <tr class="additional-info" data-id="{{ cliente_item.numero_cliente }}">
-                                            <td colspan="4">
-                                                <p>Endereço: {{ cliente_item.endereco }}</p>
-                                                <p>Email: {{ cliente_item.email }}</p>
-                                            </td>
-                                        </tr>
                                     {% endfor %}
                                 {% else %}
                                     <tr><td colspan="4">Nenhum registro encontrado</td></tr>
@@ -129,8 +123,8 @@
                             <h3>Câmeras</h3>
                             <div id="look-for-info">
                                 <input type="text" id="searchInput" placeholder="Dados">
-                                <button id="searchBtn" type="button">Procurar</button>
-                                <button id="clearBtn" type="button">Limpar</button>
+                                <button id="searchBtnCameras" type="button">Procurar</button>
+                                <button id="clearBtnCameras" type="button">Limpar</button>
                             </div>                
                         </div>
                         <table id="camsTable">
@@ -316,22 +310,7 @@
             }
         }
 
-        // Adiciona funcionalidade ao botão "Visualizar dados"
-        document.getElementById('viewClientDataBtn').onclick = function() {
-            if (selectedRow) {
-                var id = selectedRow.getAttribute('data-id');
-                var detailsRow = document.getElementById('details-' + id);
-
-                if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
-                    detailsRow.style.display = 'table-row';
-                } else {
-                    detailsRow.style.display = 'none';
-                }
-            } else {
-                alert('Nenhum cliente selecionado.');
-            }
-        }
-
+        // Função para selecionar linhas
         document.addEventListener('DOMContentLoaded', function() {
             var tableRows = document.querySelectorAll('.clients-table-row');
             var selectedRow = null;
@@ -364,33 +343,76 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var tableRows = document.querySelectorAll('.clients-table-row');
-            var selectedRow = null;
-
-            // Função para filtrar a tabela
-            function filterTable() {
-                var searchInput = document.getElementById('searchInput').value.toLowerCase();
-                tableRows.forEach(function(row) {
-                    var cells = row.querySelectorAll('td');
-                    var rowVisible = false;
-                    cells.forEach(function(cell) {
-                        if (cell.textContent.toLowerCase().includes(searchInput)) {
-                            rowVisible = true;
-                        }
-                    });
-                    row.style.display = rowVisible ? '' : 'none';
-                    var infoRow = row.nextElementSibling;
-                });
-            }
-
-            // Adiciona um evento de clique para o botão "Procurar"
-            document.getElementById('searchBtn').addEventListener('click', filterTable);            
+        // Adiciona evento de clique para os botões de busca em envios
+        var searchButtonEnvios = document.getElementById('searchBtnEnvios');
+        searchButtonEnvios.addEventListener('click', function() {
+            var input = searchButtonEnvios.previousElementSibling; // O input é o elemento anterior ao botão
+            var tableRows = document.querySelectorAll('.envios-table-row'); // Seleciona as linhas da tabela de envios
+            filterTable(tableRows, input);
         });
 
-        // Atualiza a página
-        document.getElementById('clearBtn').addEventListener('click', function(){
-            window.location.reload();
+        // Adiciona evento de clique para os botões de busca em clientes
+        var searchButtonClientes = document.getElementById('searchBtnClientes');
+        searchButtonClientes.addEventListener('click', function() {
+            var input = searchButtonClientes.previousElementSibling; // O input é o elemento anterior ao botão
+            var tableRows = document.querySelectorAll('.clients-table-row'); // Seleciona as linhas da tabela de clientes
+            filterTable(tableRows, input);
+        });
+
+        // Adiciona evento de clique para os botões de busca em câmeras
+        var searchButtonCameras = document.getElementById('searchBtnCameras');
+        searchButtonCameras.addEventListener('click', function() {
+            var input = searchButtonCameras.previousElementSibling; // O input é o elemento anterior ao botão
+            var tableRows = document.querySelectorAll('.cams-table-row'); // Seleciona as linhas da tabela de câmeras
+            filterTable(tableRows, input);
+        });
+
+        // Função para filtrar a tabela
+        function filterTable(tableRows, input) {
+            var searchInput = input.value.toLowerCase();
+            tableRows.forEach(function(row) {
+                var cells = row.querySelectorAll('td');
+                var rowVisible = false;
+                cells.forEach(function(cell) {
+                    if (cell.textContent.toLowerCase() == searchInput) {
+                        rowVisible = true;
+                    }
+                });
+                row.style.display = rowVisible ? '' : 'none';
+            });
+        }
+
+        // Adiciona evento de clique para o botão "Limpar" em Envios
+        var clearButtonEnvios = document.getElementById('clearBtnEnvios');
+        clearButtonEnvios.addEventListener('click', function() {
+            var input = document.getElementById('searchInput'); // Altere para o ID correto
+            input.value = ''; // Limpa o valor do input
+            var tableRows = document.querySelectorAll('.envios-table-row'); // Seleciona todas as linhas da tabela de envios
+            tableRows.forEach(function(row) {
+                row.style.display = ''; // Mostra todas as linhas
+            });
+        });
+
+        // Adiciona evento de clique para o botão "Limpar" em Clientes
+        var clearButtonClientes = document.getElementById('clearBtnClientes');
+        clearButtonClientes.addEventListener('click', function() {
+            var input = clearButtonClientes.previousElementSibling; // O input é o elemento anterior ao botão
+            input.value = ''; // Limpa o valor do input
+            var tableRows = document.querySelectorAll('.clients-table-row'); // Seleciona todas as linhas da tabela de clientes
+            tableRows.forEach(function(row) {
+                row.style.display = ''; // Mostra todas as linhas
+            });
+        });
+
+        // Adiciona evento de clique para o botão "Limpar" em Câmeras
+        var clearButtonCameras = document.getElementById('clearBtnCameras');
+        clearButtonCameras.addEventListener('click', function() {
+            var input = clearButtonCameras.previousElementSibling; // O input é o elemento anterior ao botão
+            input.value = ''; // Limpa o valor do input
+            var tableRows = document.querySelectorAll('.cams-table-row'); // Seleciona todas as linhas da tabela de câmeras
+            tableRows.forEach(function(row) {
+                row.style.display = ''; // Mostra todas as linhas
+            });
         });
 
     </script>
