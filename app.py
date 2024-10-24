@@ -82,7 +82,7 @@ def fetch_envios_data():
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT clienteid, cameraid, status FROM envios"
+        query = "SELECT envioid, clienteid, cameraid, status FROM envios"
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
@@ -408,6 +408,59 @@ def add_InfoEnvio():
         except mysql.connector.Error as err:
             print(f"Erro: {err}")
             return "Erro ao adicionar cliente", 500
+    else:
+        return "Erro na conexão com o banco de dados", 500
+    
+@app.route('/edit_envios', methods=['POST'])
+def edit_envios():
+    envioid = request.form.get('envio_id')
+    editNumero_pedido = request.form.get('editNumero_pedido')
+    editSequencia = request.form.get('editSequencia')
+    editStatus = request.form.get('editStatus')
+    print(editStatus,envioid,editNumero_pedido,editSequencia)
+
+    if connect_to_db():
+        db_config = get_db_config()
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            query = """
+                UPDATE envios
+                SET  numero_pedido = %s, sequencia = %s, status = %s 
+                WHERE envioid = %s
+            """
+            cursor.execute(query, (editNumero_pedido, editSequencia, editStatus, envioid))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return redirect(url_for('envios'))
+        except mysql.connector.Error as err:
+            print(f"Erro: {err}")
+            return "Erro ao editar envio", 500
+    else:
+        return "Erro na conexão com o banco de dados", 500
+
+@app.route('/delete_envio', methods=['POST'])
+def delete_envio():
+    envio_id = request.form.get('id')
+
+    if connect_to_db():
+        db_config = get_db_config()
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            
+            # Excluir a câmera
+            delete_cliente_query = "DELETE FROM envios WHERE envioid = %s"
+            cursor.execute(delete_cliente_query, (envio_id,))
+            
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return '', 204
+        except mysql.connector.Error as err:
+            print(f"Erro: {err}")
+            return "Erro ao excluir envio", 500
     else:
         return "Erro na conexão com o banco de dados", 500
 
