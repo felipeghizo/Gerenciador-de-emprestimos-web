@@ -1,6 +1,10 @@
 import sqlite3
 import mysql.connector
+from flask import Flask, render_template, request, redirect, url_for
+from conexaoDAO import ConexaoDAO
 
+
+conexao = ConexaoDAO()
 
 class CameraDAO:
     def __init__(self, modelo="", cloud="", mac=""):
@@ -155,18 +159,48 @@ class CameraDAO:
         return minha_lista
 
     # Adiciona uma nova câmera
-    def add_camera(self, modelo, cloud, mac):
-        sql = "INSERT INTO cameras (modelo, Cloud, MAC) VALUES (?, ?, ?)"
-
-        try:
-            cursor = self.connection.cursor()
-            cursor.execute(sql, (modelo, cloud, mac))
-            self.connection.commit()
-        except sqlite3.Error as e:
-            print(f"Erro: {e}")
+    def add_camera_DAO(self, modelo, cloud, mac):
+        if conexao.connect_to_db():
+            db_config = conexao.get_db_config()
+            try:
+                conn = mysql.connector.connect(**db_config)
+                cursor = conn.cursor()
+                query = "INSERT INTO cameras (modelo, Cloud, MAC) VALUES (%s, %s, %s)"
+                cursor.execute(query, (modelo, cloud, mac))
+                conn.commit()
+                cursor.close()
+                conn.close()
+                return redirect(url_for('cameras'))
+            except mysql.connector.Error as err:
+                print(f"Erro: {err}")
+                return "Erro ao adicionar câmera", 500
+        else:
+            return "Erro na conexão com o banco de dados", 500
+        
+    def edit_camera_DAO(Modelo, Cloud, MAC, camid):
+        if conexao.connect_to_db():
+            db_config = conexao.get_db_config()
+            try:
+                conn = mysql.connector.connect(**db_config)
+                cursor = conn.cursor()
+                query = """
+                    UPDATE cameras
+                    SET Modelo = %s, Cloud = %s, MAC = %s 
+                    WHERE cameraid = %s
+                """
+                cursor.execute(query, (Modelo, Cloud, MAC, camid))
+                conn.commit()
+                cursor.close()
+                conn.close()
+                return redirect(url_for('cameras'))
+            except mysql.connector.Error as err:
+                print(f"Erro: {err}")
+                return "Erro ao editar cliente", 500
+        else:
+            return "Erro na conexão com o banco de dados", 500
 
     # Exclui uma câmera
-    def del_camera(self, camera_id):
+    def del_camera_DAO(self, camera_id):
         sql = "DELETE FROM cameras WHERE cameraid = ?"
 
         try:

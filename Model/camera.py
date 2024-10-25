@@ -48,8 +48,9 @@ class Camera:
         self.modelo = modelo
         self.camera_dao.set_modelo_dao(camera_id, self.modelo)
 
-    def add_camera(self):
-        self.camera_dao.add_camera_dao(self.modelo, self.mac)
+    # Adiciona câmera
+    def add_camera(self, modelo, cloud, mac):
+        self.camera_dao.add_camera_DAP(self.modelo, self.mac)
 
     def del_camera(self, modelo, mac):
         camera_id = self.get_camera_id(modelo, mac)
