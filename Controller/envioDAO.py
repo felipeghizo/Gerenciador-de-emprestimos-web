@@ -189,7 +189,7 @@ class EnvioDAO:
             try:
                 conn = mysql.connector.connect(**db_config)
                 cursor = conn.cursor()
-                query = "INSERT INTO envios (clienteid, cameraid, numero_pedido, sequencia, status) VALUES (%s, %s, %s, %s, %s)"
+                query = "INSERT INTO envios (clienteid, cameraid, nota_fiscal, numero_pedido, sequencia, status) VALUES (%s, %s, %s, %s, %s, %s)"
                 cursor.execute(query, (clienteid, cameraid, nota_fiscal, sequencia, numero_pedido, "Ativo"))
                 conn.commit()
                 cursor.close()
@@ -197,7 +197,7 @@ class EnvioDAO:
                 return redirect(url_for('envios'))
             except mysql.connector.Error as err:
                 print(f"Erro: {err}")
-                return "Erro ao adicionar cliente", 500
+                return "Erro ao adicionar envio", 500
         else:
             return "Erro na conexão com o banco de dados", 500
         

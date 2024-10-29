@@ -342,7 +342,7 @@ def add_InfoEnvio():
     numero_pedido = request.form.get('numero_pedido')
     sequencia = request.form.get('sequencia')
     status = request.form.get('addInfo_status')
-    envioOBJ.add_envio(cliente, camera, numero_pedido, sequencia, status)
+    print(envioOBJ.add_envio(cliente, camera, numero_pedido, sequencia, status))
     
 @app.route('/edit_envios', methods=['POST'])
 def edit_envios():
