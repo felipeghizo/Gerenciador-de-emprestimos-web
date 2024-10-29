@@ -50,7 +50,7 @@ class Camera:
 
     # Adiciona câmera
     def add_camera(self, modelo, cloud, mac):
-        self.camera_dao.add_camera_DAP(self.modelo, self.mac)
+        self.camera_dao.add_camera_DAP(modelo, cloud, mac)
 
     def del_camera(self, modelo, mac):
         camera_id = self.get_camera_id(modelo, mac)

@@ -1,7 +1,7 @@
 import sqlite3
 import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for
-from conexaoDAO import ConexaoDAO
+from Controller.conexaoDAO import ConexaoDAO
 
 
 conexao = ConexaoDAO()

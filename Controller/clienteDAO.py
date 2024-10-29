@@ -1,5 +1,9 @@
 import sqlite3
 import mysql.connector
+from Controller.conexaoDAO import ConexaoDAO
+
+
+conexao = ConexaoDAO()
 
 class ClienteDAO:
     def __init__(self, nome="", telefone="", email="", numero_cliente=0, endereco=""):

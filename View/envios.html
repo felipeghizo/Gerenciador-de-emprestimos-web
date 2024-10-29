@@ -185,6 +185,14 @@
             <h2>Editar envio</h2>
             <form id="editEnviosForm" method="POST" action="{{ url_for('edit_envios') }}">
                 <input type="hidden" id="edit_envioid" name="envio_id">
+                <label for="editClienteid">ID do cliente:</label>
+                <input type="text" id="editClienteid" name="editClienteid" ><br><br>
+                <label for="editCameraid">ID da câmera:</label>
+                <input type="text" id="editCameraid" name="editCameraid" ><br><br>
+                <label for="editAcesso">Acesso:</label>
+                <input type="text" id="editNota_fiscal" name="editNota_fiscal" ><br><br>
+                <label for="editNota_fiscal">Nota fiscal:</label>
+                <input type="text" id="editNota_fiscal" name="editNota_fiscal" ><br><br>
                 <label for="editNumero_pedido">Número do pedido:</label>
                 <input type="text" id="editNumero_pedido" name="editNumero_pedido" ><br><br>
                 <label for="editSequencia">Sequência:</label>
@@ -255,10 +263,14 @@
 
         btnEdit.onclick = function() {
             if (selectedRow) {
-                var id = selectedRow.children[0].textContent;
-                var numero_pedido = selectedRow.children[1].textContent;
-                var sequencia = selectedRow.children[2].textContent;
-                var sequencia = selectedRow.children[3].textContent;
+                var envioid = selectedRow.children[0].textContent;
+                var clienteid = selectedRow.children[1].textContent;
+                var cameraid = selectedRow.children[2].textContent;
+                var acesso = selectedRow.children[3].textContent;
+                var nota_fiscal = selectedRow.children[4].textContent;
+                var numero_pedido = selectedRow.children[5].textContent;
+                var sequencia = selectedRow.children[6].textContent;
+                var status = selectedRow.children[7].textContent;
 
                 // Supondo que selectedRow seja um elemento DOM válido
                 var dados = selectedRow.nextElementSibling.textContent.split('\n');
@@ -279,13 +291,15 @@
                 });
 
                 document.getElementById('edit_clienteid').value = id;
-                document.getElementById('edit_nome').value = Nome;
+                document.getElementById('editCameraid').value = Nome;
+                document.getElementById('editAcesso').value = acesso;
+                document.getElementById('editNota_fiscal').value = nota_fiscal;
+                document.getElementById('editNumero_pedido').value = numero_pedido;
+                document.getElementById('editSequencia').value = sequencia;
                 document.getElementById('edit_numero_intelbras').value = Numero_intelbras;
-                document.getElementById('edit_telefone').value = Telefone;
-                document.getElementById('edit_endereco').value = Endereco;
-                document.getElementById('edit_email').value = Email;
+                document.getElementById('editStatus').value = status;
 
-                openModal('editClientModal');
+                openModal('editEnviosdModal');
             } else {
                 alert('Nenhum cliente selecionado.');
             }

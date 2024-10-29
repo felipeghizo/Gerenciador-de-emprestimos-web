@@ -9,16 +9,16 @@ from Controller.conexaoDAO import ConexaoDAO
 # Muda o diretório de templates para 'view'
 app = Flask(__name__, template_folder='View', static_folder='View/Style')
 
-cliente = Cliente()
-camera = Camera()
-envio = Envio()
-conexao = ConexaoDAO()
+clienteOBJ = Cliente()
+cameraOBJ = Camera()
+envioOBJ = Envio()
+conexaoOBJ = ConexaoDAO()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     show_error = False
     if request.method == 'GET':
-        if conexao.connect_to_db():  
+        if conexaoOBJ.connect_to_db():  
             return redirect(url_for('cameras'))
         else:
             show_error = True
@@ -28,8 +28,8 @@ def index():
 @app.route('/envios', methods=['GET', 'POST'])
 def envios():
     results = None
-    if conexao.connect_to_db():
-        envios_data = fetch_envios_data()
+    if conexaoOBJ.connect_to_db():
+        envios_data = envioOBJ.visualizar_dados()
         cameras_envioativo_data = fetch_cameras_enviosAtivos_data()
         clientes_envioativo_data = fetch_clientes_enviosAtivos_data()
             
@@ -45,7 +45,7 @@ def envios():
 @app.route('/cameras')
 def cameras():
     results = None
-    if conexao.connect_to_db():
+    if conexaoOBJ.connect_to_db():
         results = fetch_cameras_data()
         return render_template('Cameras.html', cameras=results)
     else:
@@ -54,7 +54,7 @@ def cameras():
 @app.route('/clientes')
 def clientes():
     results = None
-    if conexao.connect_to_db():
+    if conexaoOBJ.connect_to_db():
         results = fetch_clientes_data()
         return render_template('Clientes.html', clientes=results)
     else:
@@ -64,30 +64,8 @@ def clientes():
 def historico():
     return render_template('Historico.html')
 
-def fetch_envios_data():
-    db_config = conexao.get_db_config()
-    try: 
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-        query = "SELECT envioid, clienteid, cameraid, status FROM envios"
-        cursor.execute(query)
-        results = cursor.fetchall()
-        cursor.close()
-        conn.close()
-
-        # Atualizando o dicionário com o nome correspondente ao ID do cliente
-        for obj in results:
-            if 'clienteid' in obj:
-                obj['clienteid'] = cliente.get_nome_id(obj['clienteid'])
-            if 'cameraid' in obj:
-                obj['cameraid'] = camera.get_modelo_id(obj['cameraid'])
-        return results
-    except mysql.connector.Error as err:
-        print(f"Erro: {err}")
-        return []
-
 def fetch_clientes_data():
-    db_config = conexao.get_db_config()
+    db_config = conexaoOBJ.get_db_config()
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
@@ -103,7 +81,7 @@ def fetch_clientes_data():
         return []
 
 def fetch_clientes_enviosAtivos_data():
-    db_config = conexao.get_db_config()
+    db_config = conexaoOBJ.get_db_config()
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
@@ -124,7 +102,7 @@ def fetch_clientes_enviosAtivos_data():
         return []
 
 def fetch_cameras_data():
-    db_config = conexao.get_db_config()
+    db_config = conexaoOBJ.get_db_config()
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
@@ -139,7 +117,7 @@ def fetch_cameras_data():
         return []
         
 def fetch_cameras_enviosAtivos_data():
-    db_config = conexao.get_db_config()
+    db_config = conexaoOBJ.get_db_config()
     try: 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
@@ -167,8 +145,8 @@ def add_cliente():
     endereco = request.form.get('add_endereco')
     email = request.form.get('add_email')
     
-    if conexao.connect_to_db():
-        db_config = conexao.get_db_config()
+    if conexaoOBJ.connect_to_db():
+        db_config = conexaoOBJ.get_db_config()
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
@@ -193,8 +171,8 @@ def edit_cliente():
     endereco = request.form.get('edit_endereco')
     email = request.form.get('edit_email')
 
-    if conexao.connect_to_db():
-        db_config = conexao.get_db_config()
+    if conexaoOBJ.connect_to_db():
+        db_config = conexaoOBJ.get_db_config()
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
@@ -218,8 +196,8 @@ def edit_cliente():
 def delete_cliente():
     cliente_id = request.form.get('id')
 
-    if conexao.connect_to_db():
-        db_config = conexao.get_db_config()
+    if conexaoOBJ.connect_to_db():
+        db_config = conexaoOBJ.get_db_config()
         try:
             if cliente_tem_envios(cliente_id):
                 return "Não é possível excluir o cliente porque ele está associado a envios ativos.", 400
@@ -242,7 +220,7 @@ def delete_cliente():
         return "Erro na conexão com o banco de dados", 500
 
 def cliente_tem_envios(numero_cliente):
-    db_config = conexao.get_db_config()
+    db_config = conexaoOBJ.get_db_config()
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
@@ -279,7 +257,7 @@ def add_camera():
     modelo = request.form.get('modelo')
     cloud = request.form.get('Cloud')
     mac = request.form.get('MAC')
-    camera.add_camera(modelo, cloud, mac)
+    cameraOBJ.add_camera(modelo, cloud, mac)
 
 @app.route('/edit_camera', methods=['POST'])
 def edit_camera():
@@ -288,8 +266,8 @@ def edit_camera():
     MAC = request.form.get('MAC')
     camid = request.form.get('edit_id')
 
-    if conexao.connect_to_db():
-        db_config = conexao.get_db_config()
+    if conexaoOBJ.connect_to_db():
+        db_config = conexaoOBJ.get_db_config()
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
@@ -313,8 +291,8 @@ def edit_camera():
 def delete_camera():
     camera_id = request.form.get('id')
 
-    if conexao.connect_to_db():
-        db_config = conexao.get_db_config()
+    if conexaoOBJ.connect_to_db():
+        db_config = conexaoOBJ.get_db_config()
         try:
             if camera_tem_envios(camera_id):
                 return "Não é possível excluir a câmera porque ela está associada a envios ativos.", 400
@@ -337,7 +315,7 @@ def delete_camera():
         return "Erro na conexão com o banco de dados", 500
 
 def camera_tem_envios(cameraid):
-    db_config = conexao.get_db_config()
+    db_config = conexaoOBJ.get_db_config()
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
@@ -364,20 +342,24 @@ def add_InfoEnvio():
     numero_pedido = request.form.get('numero_pedido')
     sequencia = request.form.get('sequencia')
     status = request.form.get('addInfo_status')
-    envio.add_envio(cliente, camera, numero_pedido, sequencia, status)
+    envioOBJ.add_envio(cliente, camera, numero_pedido, sequencia, status)
     
 @app.route('/edit_envios', methods=['POST'])
 def edit_envios():
     envioid = request.form.get('envio_id')
-    editNumero_pedido = request.form.get('editNumero_pedido')
-    editSequencia = request.form.get('editSequencia')
-    editStatus = request.form.get('editStatus')
-    envio.edit_envio(envioid, editNumero_pedido, editSequencia, editStatus)
+    clienteid = request.form.get('editClienteid')
+    cameraid = request.form.get('editCameraid')
+    acesso = request.form.get('editAcesso')
+    nota_fiscal = request.form.get('editNota_fiscal') 
+    numero_pedido = request.form.get('editNumero_pedido')
+    sequencia = request.form.get('editSequencia')
+    status = request.form.get('editStatus')
+    envioOBJ.edit_envio(envioid, clienteid, cameraid, acesso, nota_fiscal, sequencia, numero_pedido, status)
 
 @app.route('/delete_envio', methods=['POST'])
 def delete_envio():
     envio_id = request.form.get('id')
-    envio.delete_envio(envio_id)
+    envioOBJ.delete_envio(envio_id)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
